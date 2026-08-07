@@ -18,7 +18,8 @@
                         cardbg: '#1E293B',
                         accentblue: '#38BDF8',
                         accentgreen: '#22C55E',
-                        accentred: '#EF4444'
+                        accentred: '#EF4444',
+                        accentamber: '#F59E0B'
                     }
                 }
             }
@@ -27,40 +28,68 @@
 </head>
 <body class="bg-darkbg text-slate-100 font-sans min-h-screen p-4 md:p-8">
 
-    <!-- Header -->
-    <header class="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-800 pb-5">
-        <div>
-            <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-                <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                MLFP Hybrid Quant Dashboard
-            </h1>
-            <p class="text-slate-400 text-sm mt-1">Leak-Free Walk-Forward ML | Unsupervised K-Means Regimes | Gemini Catalyst</p>
+    <!-- Header & Controls -->
+    <header class="max-w-7xl mx-auto mb-8 border-b border-slate-800 pb-5">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
+                    <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    MLFP Hybrid Quant Dashboard
+                </h1>
+                <p class="text-slate-400 text-sm mt-1">Leak-Free Walk-Forward ML | K-Means Regimes | Gemini Catalyst</p>
+            </div>
+
+            <!-- Ticker Select & GO Control Bar -->
+            <div class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800 shadow-lg">
+                <div class="flex gap-1">
+                    <button onclick="selectTicker('SBIN')" id="btn-SBIN" class="ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-accentblue text-slate-900 transition">SBIN</button>
+                    <button onclick="selectTicker('RELIANCE')" id="btn-RELIANCE" class="ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition">RELIANCE</button>
+                    <button onclick="selectTicker('INFY')" id="btn-INFY" class="ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition">INFY</button>
+                </div>
+                <!-- Prominent GO Execution Button -->
+                <button onclick="executeAnalysis()" id="btn-go" class="px-6 py-2 rounded-lg font-extrabold text-sm bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition shadow-md shadow-emerald-500/20 flex items-center gap-1">
+                    <span>GO</span>
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"/></svg>
+                </button>
+            </div>
         </div>
-        <!-- Ticker Selector -->
-        <div class="flex gap-2 mt-4 md:mt-0">
-            <button onclick="loadTicker('SBIN')" id="btn-SBIN" class="ticker-btn px-5 py-2 rounded-lg font-semibold border border-slate-700 bg-slate-800 hover:bg-slate-700 transition">SBIN</button>
-            <button onclick="loadTicker('RELIANCE')" id="btn-RELIANCE" class="ticker-btn px-5 py-2 rounded-lg font-semibold border border-slate-700 bg-slate-800 hover:bg-slate-700 transition">RELIANCE</button>
-            <button onclick="loadTicker('INFY')" id="btn-INFY" class="ticker-btn px-5 py-2 rounded-lg font-semibold border border-slate-700 bg-slate-800 hover:bg-slate-700 transition">INFY</button>
+
+        <!-- Utility Bar: Telemetry Copier -->
+        <div class="mt-4 flex justify-between items-center bg-slate-900/50 px-4 py-2 rounded-lg border border-slate-800 text-xs text-slate-400">
+            <span>Status: <strong id="status-label" class="text-slate-200">Idle (Click GO to run analysis)</strong></span>
+            <button onclick="copyTelemetryOutput()" id="btn-copy" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-accentblue font-semibold border border-slate-700 transition flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                <span id="copy-btn-text">Copy Telemetry Output</span>
+            </button>
         </div>
     </header>
 
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto space-y-6">
 
-        <!-- Loading State -->
+        <!-- Initial Landing Banner -->
+        <div id="landing-screen" class="text-center py-20 bg-cardbg rounded-2xl border border-slate-800">
+            <div class="inline-flex p-4 rounded-full bg-slate-800/80 text-accentblue mb-4">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-white">Select a Stock & Click "GO"</h3>
+            <p class="text-slate-400 text-sm mt-1 max-w-md mx-auto">Analysis will execute on-demand to fetch historical Upstox candles, run K-Means regime clustering, and evaluate Gemini AI catalyst sentiment.</p>
+        </div>
+
+        <!-- Loading Screen -->
         <div id="loading-screen" class="hidden text-center py-20 bg-cardbg rounded-2xl border border-slate-800">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accentblue border-t-transparent mb-4"></div>
             <h3 class="text-xl font-semibold text-white">Running Quant Pipeline...</h3>
-            <p class="text-slate-400 text-sm mt-1">Fetching Upstox Candles, Executing Walk-Forward Bake-Off & AI Sentiment...</p>
+            <p class="text-slate-400 text-sm mt-1">Executing Walk-Forward Validation & Querying Gemini API...</p>
         </div>
 
-        <!-- Dashboard Content -->
-        <div id="dashboard-view" class="space-y-6">
+        <!-- Main Dashboard View -->
+        <div id="dashboard-view" class="hidden space-y-6">
 
-            <!-- Top Row: Decision Support & AI Overlay -->
+            <!-- Top Row: Signal & Gemini Overlay -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 
-                <!-- Card 1: Live Quant Signal -->
+                <!-- Card 1: Live Signal & Conviction -->
                 <div class="bg-cardbg p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
                     <div>
                         <span class="text-xs uppercase tracking-wider font-semibold text-slate-400">Target Asset Signal</span>
@@ -85,7 +114,7 @@
                     </div>
                 </div>
 
-                <!-- Card 2: AI Sentiment Overlay -->
+                <!-- Card 2: Gemini Catalyst Overlay -->
                 <div class="bg-cardbg p-6 rounded-2xl border border-slate-800 flex flex-col justify-between md:col-span-2">
                     <div>
                         <div class="flex justify-between items-center">
@@ -93,18 +122,18 @@
                             <span id="disp-ai-score" class="px-3 py-1 rounded-md font-bold text-sm bg-slate-800 text-slate-300">Score: 0.0</span>
                         </div>
                         <p id="disp-ai-summary" class="text-slate-300 mt-4 text-base italic leading-relaxed">
-                            "Fetch a stock to load catalyst summary..."
+                            "Summary loading..."
                         </p>
                     </div>
                     <div class="mt-6 border-t border-slate-800 pt-4 flex items-center gap-2 text-xs text-slate-500">
                         <svg class="w-4 h-4 text-accentblue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        Unstructured news headlines processed live via Gemini 3.5 Flash JSON API.
+                        News headlines processed live via Gemini 3.5 Flash JSON API.
                     </div>
                 </div>
 
             </div>
 
-            <!-- Middle Row: Performance Comparison Cards -->
+            <!-- Middle Row: Strategy Returns -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-cardbg p-5 rounded-xl border border-slate-800">
                     <span class="text-xs text-slate-400 uppercase font-semibold">Benchmark (Buy & Hold)</span>
@@ -120,16 +149,16 @@
                 </div>
             </div>
 
-            <!-- Interactive Backtest Chart -->
+            <!-- Backtest Chart -->
             <div class="bg-cardbg p-6 rounded-2xl border border-slate-800">
                 <h3 class="text-lg font-bold text-white mb-2">Out-Of-Sample Cumulative P&L Reality Check</h3>
-                <p class="text-slate-400 text-xs mb-6">Compares Buy & Hold vs. Unfiltered Strategy vs. K-Means Regime-Filtered Strategy (Accounting for 0.15% Transaction Friction).</p>
+                <p class="text-slate-400 text-xs mb-6">Compares Buy & Hold vs. Unfiltered Strategy vs. Regime-Filtered Strategy (0.15% Friction).</p>
                 <div class="relative h-96 w-full">
                     <canvas id="pnlChart"></canvas>
                 </div>
             </div>
 
-            <!-- Bottom Row: Diagnostics Panel -->
+            <!-- Diagnostics -->
             <div class="bg-cardbg p-6 rounded-2xl border border-slate-800">
                 <h3 class="text-md font-bold text-white mb-4">Turnover & Friction Drag Analysis</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
@@ -147,51 +176,60 @@
         </div>
     </main>
 
-    <!-- JavaScript Engine -->
+    <!-- JavaScript Controller -->
     <script>
         const RENDER_BACKEND_URL = "https://mlfp-backend-api.onrender.com";
+        let activeTicker = 'SBIN';
+        let latestTelemetryData = null;
         let chartInstance = null;
 
-        async function loadTicker(ticker) {
-            // Update active button state
+        function selectTicker(ticker) {
+            activeTicker = ticker;
             document.querySelectorAll('.ticker-btn').forEach(btn => {
-                btn.classList.remove('bg-accentblue', 'text-slate-900');
-                btn.classList.add('bg-slate-800', 'text-slate-100');
+                btn.className = "ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
             });
             const activeBtn = document.getElementById(`btn-${ticker}`);
             if (activeBtn) {
-                activeBtn.classList.remove('bg-slate-800', 'text-slate-100');
-                activeBtn.classList.add('bg-accentblue', 'text-slate-900');
+                activeBtn.className = "ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-accentblue text-slate-900 transition";
             }
+            document.getElementById('status-label').innerText = `Selected ${ticker}. Click "GO" to analyze.`;
+        }
 
-            // Show Loading State
+        async function executeAnalysis() {
+            // Show Loading
+            document.getElementById('landing-screen').classList.add('hidden');
             document.getElementById('loading-screen').classList.remove('hidden');
             document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('status-label').innerText = `Analyzing ${activeTicker}...`;
 
             try {
-                const response = await fetch(`${RENDER_BACKEND_URL}/api/analyze/${ticker}`);
+                const response = await fetch(`${RENDER_BACKEND_URL}/api/analyze/${activeTicker}`);
                 if (!response.ok) throw new Error("Backend API call failed");
                 const data = await response.json();
+                latestTelemetryData = data;
 
-                // Populate Decision Support Cards
+                // Decision Cards
                 document.getElementById('disp-ticker').innerText = data.ticker;
                 document.getElementById('disp-model').innerText = data.best_model;
                 document.getElementById('disp-prob').innerText = `${data.quant_probability}%`;
                 document.getElementById('disp-regime').innerText = data.current_regime;
 
+                // Conviction Badge Styling
                 const sigBadge = document.getElementById('disp-signal');
                 sigBadge.innerText = data.quant_signal;
                 if (data.quant_signal === "BULLISH") {
                     sigBadge.className = "px-3 py-1 rounded-md font-bold text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-                } else {
+                } else if (data.quant_signal === "BEARISH") {
                     sigBadge.className = "px-3 py-1 rounded-md font-bold text-sm bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                } else {
+                    sigBadge.className = "px-3 py-1 rounded-md font-bold text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30";
                 }
 
-                // AI Sentiment Card
+                // AI Overlay
                 document.getElementById('disp-ai-score').innerText = `Score: ${data.ai_sentiment_score}`;
                 document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
 
-                // Performance Cards
+                // Returns
                 document.getElementById('disp-ret-bh').innerText = `${data.performance.buy_and_hold_pct}%`;
                 document.getElementById('disp-ret-unfilt').innerText = `${data.performance.unfiltered_strat_pct}%`;
                 document.getElementById('disp-ret-filt').innerText = `${data.performance.filtered_strat_pct}%`;
@@ -208,12 +246,48 @@
                 // Show Dashboard
                 document.getElementById('loading-screen').classList.add('hidden');
                 document.getElementById('dashboard-view').classList.remove('hidden');
+                document.getElementById('status-label').innerText = `Analysis Complete for ${activeTicker}`;
 
             } catch (err) {
-                alert(`Error loading data from Render backend: ${err.message}`);
+                alert(`Error executing analysis: ${err.message}`);
                 document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('dashboard-view').classList.remove('hidden');
+                document.getElementById('status-label').innerText = `Analysis Failed`;
             }
+        }
+
+        function copyTelemetryOutput() {
+            if (!latestTelemetryData) {
+                alert("Please click GO to run an analysis first before copying telemetry.");
+                return;
+            }
+
+            const formattedText = `=== MLFP QUANT ENGINE TELEMETRY OUTPUT ===
+Asset Ticker: ${latestTelemetryData.ticker}
+Quant Signal: ${latestTelemetryData.quant_signal} (Bullish Probability: ${latestTelemetryData.quant_probability}%)
+Winning ML Model: ${latestTelemetryData.best_model}
+Current Volatility Regime: ${latestTelemetryData.current_regime}
+
+--- GEMINI LLM CATALYST OVERLAY ---
+Sentiment Score: ${latestTelemetryData.ai_sentiment_score}
+Executive Summary: "${latestTelemetryData.ai_summary}"
+
+--- BACKTEST PERFORMANCE COMPARISON ---
+Buy & Hold Benchmark Return: ${latestTelemetryData.performance.buy_and_hold_pct}%
+Naive Unfiltered Strategy Return: ${latestTelemetryData.performance.unfiltered_strat_pct}%
+Regime-Filtered Strategy Return: ${latestTelemetryData.performance.filtered_strat_pct}%
+
+--- TURNOVER & FRICTION DIAGNOSTICS ---
+Unfiltered Position Flips: ${latestTelemetryData.diagnostics.unfiltered_trades} (Friction Drag: ${latestTelemetryData.diagnostics.unfiltered_friction_pct}%)
+Regime-Filtered Position Flips: ${latestTelemetryData.diagnostics.filtered_trades} (Friction Drag: ${latestTelemetryData.diagnostics.filtered_friction_pct}%)
+===========================================`;
+
+            navigator.clipboard.writeText(formattedText).then(() => {
+                const copyTextSpan = document.getElementById('copy-btn-text');
+                copyTextSpan.innerText = "Copied to Clipboard! ✓";
+                setTimeout(() => { copyTextSpan.innerText = "Copy Telemetry Output"; }, 2500);
+            }).catch(err => {
+                alert("Failed to copy to clipboard: " + err);
+            });
         }
 
         function renderChart(chartData) {
@@ -262,9 +336,6 @@
                 }
             });
         }
-
-        // Load SBIN by default on page load
-        window.onload = () => loadTicker('SBIN');
     </script>
 </body>
 </html>
