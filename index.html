@@ -1,340 +1,353 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLFP Quant Engine & Regime Analytics</title>
-    <!-- Tailwind CSS -->
+    <title>AI Quant Interface</title>
+    <!-- Google Fonts for Humanly Aesthetics -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#0F172A',
-                        cardbg: '#1E293B',
-                        accentblue: '#38BDF8',
-                        accentgreen: '#22C55E',
-                        accentred: '#EF4444',
-                        accentamber: '#F59E0B'
-                    }
-                }
-            }
+    <style>
+        /* Advanced Neumorphism & Motion Graphics Engine */
+        :root {
+            --bg: #e6e9ef;
+            --text-dark: #3a4049;
+            --text-muted: #788293;
+            --accent: #5a81fa;
+            --shadow-light: #ffffff;
+            --shadow-dark: #c4c7cc;
         }
-    </script>
-</head>
-<body class="bg-darkbg text-slate-100 font-sans min-h-screen p-4 md:p-8">
+        body {
+            background-color: var(--bg);
+            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* Floating Organic Background Orbs */
+        .bg-orb {
+            position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.4; z-index: -1;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .orb-1 { width: 400px; height: 400px; background: #a3bffa; top: -100px; left: -100px; }
+        .orb-2 { width: 300px; height: 300px; background: #e2dcfc; bottom: -50px; right: -50px; animation-delay: -5s; }
 
-    <!-- Header & Controls -->
-    <header class="max-w-7xl mx-auto mb-8 border-b border-slate-800 pb-5">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* Neumorphic UI Components */
+        .neo-flat {
+            background: var(--bg);
+            box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+            border-radius: 24px;
+        }
+        .neo-pressed {
+            background: var(--bg);
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), inset -6px -6px 12px var(--shadow-light);
+            border-radius: 16px;
+        }
+        .neo-btn {
+            background: var(--bg);
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            border-radius: 16px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+        }
+        .neo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light);
+        }
+        .neo-btn:active, .neo-btn.active-ticker {
+            transform: translateY(0);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Sliders */
+        input[type=range] {
+            -webkit-appearance: none; width: 100%; background: transparent;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 10px; background: var(--bg);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
+            border-radius: 5px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
+            background: var(--bg); margin-top: -6px; cursor: pointer;
+            box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        }
+
+        /* Staggered Entrance Animations */
+        .fade-in-up {
+            opacity: 0; transform: translateY(20px);
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Status Dot */
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .dot-green { background: #38a169; box-shadow: 0 0 10px #38a169; animation: pulseG 2s infinite; }
+        .dot-red { background: #e53e3e; box-shadow: 0 0 10px #e53e3e; }
+        .dot-yellow { background: #d69e2e; box-shadow: 0 0 10px #d69e2e; }
+        @keyframes pulseG { 0% { box-shadow: 0 0 0 0 rgba(56, 161, 105, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(56, 161, 105, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 161, 105, 0); } }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+
+    <!-- Ambient Background -->
+    <div class="bg-orb orb-1"></div>
+    <div class="bg-orb orb-2"></div>
+
+    <div class="max-w-6xl mx-auto space-y-8">
+        
+        <!-- Header -->
+        <header class="fade-in-up flex flex-col md:flex-row justify-between items-end gap-4">
             <div>
-                <h1 class="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-                    <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
-                    MLFP Hybrid Quant Dashboard
-                </h1>
-                <p class="text-slate-400 text-sm mt-1">Leak-Free Walk-Forward ML | K-Means Regimes | Gemini Catalyst</p>
+                <h1 id="human-greeting" class="text-3xl md:text-4xl font-bold tracking-tight">Good morning.</h1>
+                <p class="text-muted mt-2 text-sm md:text-base">The AI Engine is awake. I have scanned the top Indian equities for you.</p>
+            </div>
+            <button onclick="copyTelemetryOutput()" class="neo-btn px-5 py-2 text-sm text-muted flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                <span id="copy-btn-text">Copy Telemetry</span>
+            </button>
+        </header>
+
+        <!-- Scanner Grid -->
+        <div class="fade-in-up delay-1">
+            <h3 class="text-sm uppercase tracking-widest text-muted mb-4 font-semibold">Live Market Heatmap</h3>
+            <div id="scanner-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <!-- Populated via JS -->
+                <div class="neo-pressed h-16 flex items-center justify-center text-sm text-muted animate-pulse col-span-full">
+                    Scanning market regimes...
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Area -->
+        <div class="fade-in-up delay-2 neo-flat p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+            
+            <div class="space-y-2">
+                <div class="flex justify-between text-sm"><span class="font-semibold">Friction Cost</span><span id="val-friction" class="text-accent font-bold">0.15%</span></div>
+                <input type="range" id="slider-friction" min="0" max="0.50" step="0.01" value="0.15" oninput="document.getElementById('val-friction').innerText = this.value + '%'">
+                <p class="text-xs text-muted">Simulates brokerage & tax drag.</p>
             </div>
 
-            <!-- Ticker Select & GO Control Bar -->
-            <div class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800 shadow-lg">
-                <div class="flex gap-1">
-                    <button onclick="selectTicker('SBIN')" id="btn-SBIN" class="ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-accentblue text-slate-900 transition">SBIN</button>
-                    <button onclick="selectTicker('RELIANCE')" id="btn-RELIANCE" class="ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition">RELIANCE</button>
-                    <button onclick="selectTicker('INFY')" id="btn-INFY" class="ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition">INFY</button>
-                </div>
-                <!-- Prominent GO Execution Button -->
-                <button onclick="executeAnalysis()" id="btn-go" class="px-6 py-2 rounded-lg font-extrabold text-sm bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition shadow-md shadow-emerald-500/20 flex items-center gap-1">
-                    <span>GO</span>
-                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"/></svg>
+            <div class="space-y-2">
+                <div class="flex justify-between text-sm"><span class="font-semibold">Conviction Zone</span><span id="val-neutral" class="text-accent font-bold">± 5%</span></div>
+                <input type="range" id="slider-neutral" min="0" max="15" step="1" value="5" oninput="document.getElementById('val-neutral').innerText = '± ' + this.value + '%'">
+                <p class="text-xs text-muted">Forces flat position if prediction is unsure.</p>
+            </div>
+
+            <div class="text-right">
+                <button onclick="executeAnalysis()" class="neo-btn w-full md:w-auto px-10 py-4 text-lg font-bold text-accent">
+                    Execute Analysis
                 </button>
             </div>
         </div>
 
-        <!-- Utility Bar: Telemetry Copier -->
-        <div class="mt-4 flex justify-between items-center bg-slate-900/50 px-4 py-2 rounded-lg border border-slate-800 text-xs text-slate-400">
-            <span>Status: <strong id="status-label" class="text-slate-200">Idle (Click GO to run analysis)</strong></span>
-            <button onclick="copyTelemetryOutput()" id="btn-copy" class="px-3 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-accentblue font-semibold border border-slate-700 transition flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-                <span id="copy-btn-text">Copy Telemetry Output</span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto space-y-6">
-
-        <!-- Initial Landing Banner -->
-        <div id="landing-screen" class="text-center py-20 bg-cardbg rounded-2xl border border-slate-800">
-            <div class="inline-flex p-4 rounded-full bg-slate-800/80 text-accentblue mb-4">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-            </div>
-            <h3 class="text-xl font-bold text-white">Select a Stock & Click "GO"</h3>
-            <p class="text-slate-400 text-sm mt-1 max-w-md mx-auto">Analysis will execute on-demand to fetch historical Upstox candles, run K-Means regime clustering, and evaluate Gemini AI catalyst sentiment.</p>
+        <!-- Loading State -->
+        <div id="loading-view" class="hidden neo-pressed p-12 text-center fade-in-up">
+            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-accent border-t-transparent mb-4"></div>
+            <h3 class="text-xl font-semibold">Synthesizing Data...</h3>
+            <p class="text-muted text-sm mt-2">Running walk-forward ML validations and querying Gemini LLM.</p>
         </div>
 
-        <!-- Loading Screen -->
-        <div id="loading-screen" class="hidden text-center py-20 bg-cardbg rounded-2xl border border-slate-800">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accentblue border-t-transparent mb-4"></div>
-            <h3 class="text-xl font-semibold text-white">Running Quant Pipeline...</h3>
-            <p class="text-slate-400 text-sm mt-1">Executing Walk-Forward Validation & Querying Gemini API...</p>
-        </div>
-
-        <!-- Main Dashboard View -->
-        <div id="dashboard-view" class="hidden space-y-6">
-
-            <!-- Top Row: Signal & Gemini Overlay -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- Card 1: Live Signal & Conviction -->
-                <div class="bg-cardbg p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
+        <!-- Dashboard View -->
+        <div id="dashboard-view" class="hidden space-y-8 fade-in-up">
+            
+            <!-- Context & Signal -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- AI Conversational Box -->
+                <div class="neo-flat p-8 flex flex-col justify-between">
                     <div>
-                        <span class="text-xs uppercase tracking-wider font-semibold text-slate-400">Target Asset Signal</span>
-                        <div class="flex justify-between items-center mt-2">
-                            <h2 id="disp-ticker" class="text-3xl font-extrabold text-white">---</h2>
-                            <span id="disp-signal" class="px-3 py-1 rounded-md font-bold text-sm bg-slate-800 text-slate-400">WAITING</span>
+                        <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">AI Executive Brief</h3>
+                        <div class="neo-pressed p-5 mt-4">
+                            <p id="disp-ai-summary" class="text-base leading-relaxed italic text-dark">
+                                "..."
+                            </p>
                         </div>
                     </div>
-                    <div class="mt-6 border-t border-slate-800 pt-4 space-y-2">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-slate-400">Winning Model:</span>
-                            <span id="disp-model" class="font-semibold text-slate-200">---</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-slate-400">Bullish Probability:</span>
-                            <span id="disp-prob" class="font-semibold text-accentblue">---%</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-slate-400">Market Regime:</span>
-                            <span id="disp-regime" class="font-semibold text-slate-200">---</span>
-                        </div>
+                    <div class="mt-6 flex justify-between items-center text-sm">
+                        <span class="text-muted">Gemini Catalyst Score:</span>
+                        <span id="disp-ai-score" class="font-bold text-accent text-lg">0.0</span>
                     </div>
                 </div>
 
-                <!-- Card 2: Gemini Catalyst Overlay -->
-                <div class="bg-cardbg p-6 rounded-2xl border border-slate-800 flex flex-col justify-between md:col-span-2">
-                    <div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs uppercase tracking-wider font-semibold text-slate-400">Gemini LLM Catalyst Overlay</span>
-                            <span id="disp-ai-score" class="px-3 py-1 rounded-md font-bold text-sm bg-slate-800 text-slate-300">Score: 0.0</span>
-                        </div>
-                        <p id="disp-ai-summary" class="text-slate-300 mt-4 text-base italic leading-relaxed">
-                            "Summary loading..."
-                        </p>
+                <!-- Signal Box -->
+                <div class="neo-flat p-8 flex flex-col justify-center">
+                    <div class="text-center">
+                        <h2 id="disp-ticker" class="text-5xl font-bold mb-4">---</h2>
+                        <span id="disp-signal" class="inline-block px-6 py-2 rounded-full font-bold tracking-widest text-sm neo-pressed">WAITING</span>
                     </div>
-                    <div class="mt-6 border-t border-slate-800 pt-4 flex items-center gap-2 text-xs text-slate-500">
-                        <svg class="w-4 h-4 text-accentblue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        News headlines processed live via Gemini 3.5 Flash JSON API.
+                    <div class="mt-8 space-y-3 text-sm">
+                        <div class="flex justify-between border-b border-gray-300 pb-2"><span class="text-muted">Winning Algorithm</span><span id="disp-model" class="font-semibold">---</span></div>
+                        <div class="flex justify-between border-b border-gray-300 pb-2"><span class="text-muted">Bullish Probability</span><span id="disp-prob" class="font-bold text-accent">---%</span></div>
+                        <div class="flex justify-between"><span class="text-muted">K-Means Regime</span><span id="disp-regime" class="font-semibold">---</span></div>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Middle Row: Strategy Returns -->
+            <!-- Returns -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-cardbg p-5 rounded-xl border border-slate-800">
-                    <span class="text-xs text-slate-400 uppercase font-semibold">Benchmark (Buy & Hold)</span>
-                    <p id="disp-ret-bh" class="text-2xl font-bold mt-1 text-slate-200">0.00%</p>
-                </div>
-                <div class="bg-cardbg p-5 rounded-xl border border-slate-800">
-                    <span class="text-xs text-slate-400 uppercase font-semibold">Naive Unfiltered Strategy</span>
-                    <p id="disp-ret-unfilt" class="text-2xl font-bold mt-1 text-accentred">0.00%</p>
-                </div>
-                <div class="bg-cardbg p-5 rounded-xl border border-slate-800">
-                    <span class="text-xs text-slate-400 uppercase font-semibold">Regime-Filtered Strategy</span>
-                    <p id="disp-ret-filt" class="text-2xl font-bold mt-1 text-accentgreen">0.00%</p>
-                </div>
+                <div class="neo-flat p-6 text-center"><span class="text-xs text-muted uppercase tracking-wider">Benchmark Hold</span><p id="disp-ret-bh" class="text-2xl font-bold mt-1">0.00%</p></div>
+                <div class="neo-flat p-6 text-center"><span class="text-xs text-muted uppercase tracking-wider">Naive Strategy</span><p id="disp-ret-unfilt" class="text-2xl font-bold mt-1 text-red-500">0.00%</p></div>
+                <div class="neo-flat p-6 text-center"><span class="text-xs text-muted uppercase tracking-wider">Regime-Filtered</span><p id="disp-ret-filt" class="text-2xl font-bold mt-1 text-green-600">0.00%</p></div>
             </div>
 
-            <!-- Backtest Chart -->
-            <div class="bg-cardbg p-6 rounded-2xl border border-slate-800">
-                <h3 class="text-lg font-bold text-white mb-2">Out-Of-Sample Cumulative P&L Reality Check</h3>
-                <p class="text-slate-400 text-xs mb-6">Compares Buy & Hold vs. Unfiltered Strategy vs. Regime-Filtered Strategy (0.15% Friction).</p>
-                <div class="relative h-96 w-full">
-                    <canvas id="pnlChart"></canvas>
-                </div>
+            <!-- Chart -->
+            <div class="neo-flat p-6">
+                <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative P&L Projection</h3>
+                <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
-
+            
             <!-- Diagnostics -->
-            <div class="bg-cardbg p-6 rounded-2xl border border-slate-800">
-                <h3 class="text-md font-bold text-white mb-4">Turnover & Friction Drag Analysis</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-                    <div class="space-y-2 border-r border-slate-800 pr-4">
-                        <div class="flex justify-between"><span class="text-slate-400">Unfiltered Position Flips:</span><span id="disp-diag-unfilt-trades" class="font-bold text-slate-200">0</span></div>
-                        <div class="flex justify-between"><span class="text-slate-400">Unfiltered Cumulative Friction Drag:</span><span id="disp-diag-unfilt-frict" class="font-bold text-accentred">0.00%</span></div>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="flex justify-between"><span class="text-slate-400">Regime-Filtered Position Flips:</span><span id="disp-diag-filt-trades" class="font-bold text-slate-200">0</span></div>
-                        <div class="flex justify-between"><span class="text-slate-400">Regime-Filtered Cumulative Friction Drag:</span><span id="disp-diag-filt-frict" class="font-bold text-accentgreen">0.00%</span></div>
-                    </div>
-                </div>
+            <div class="neo-flat p-6 grid grid-cols-2 gap-4 text-center text-sm">
+                <div><p class="text-muted mb-1">Unfiltered Trades / Friction</p><p class="font-bold"><span id="disp-diag-unfilt-trades">0</span> / <span id="disp-diag-unfilt-frict" class="text-red-500">0%</span></p></div>
+                <div><p class="text-muted mb-1">Filtered Trades / Friction</p><p class="font-bold"><span id="disp-diag-filt-trades">0</span> / <span id="disp-diag-filt-frict" class="text-green-600">0%</span></p></div>
             </div>
 
         </div>
-    </main>
+    </div>
 
-    <!-- JavaScript Controller -->
     <script>
         const RENDER_BACKEND_URL = "https://mlfp-backend-api.onrender.com";
-        let activeTicker = 'SBIN';
-        let latestTelemetryData = null;
+        let activeTicker = null;
+        let latestData = null;
         let chartInstance = null;
+
+        // Humanly Greeting
+        const hr = new Date().getHours();
+        document.getElementById('human-greeting').innerText = (hr < 12) ? "Good morning." : (hr < 18) ? "Good afternoon." : "Good evening.";
+
+        // 1. Fetch Scanner on Load
+        window.onload = async () => {
+            try {
+                const res = await fetch(`${RENDER_BACKEND_URL}/api/scanner`);
+                const data = await res.json();
+                const grid = document.getElementById('scanner-grid');
+                grid.innerHTML = '';
+                
+                data.scanner.forEach((s, idx) => {
+                    const dotClass = `dot-${s.status}`;
+                    const delay = `delay-${(idx % 4) + 1}`;
+                    grid.innerHTML += `
+                        <button onclick="selectTicker('${s.ticker}')" id="btn-${s.ticker}" class="neo-btn p-3 flex flex-col items-center justify-center fade-in-up ${delay}">
+                            <div class="flex items-center gap-2 mb-1"><span class="dot ${dotClass}"></span><span class="font-bold text-sm">${s.ticker}</span></div>
+                            <span class="text-xs text-muted">₹${s.price}</span>
+                        </button>
+                    `;
+                });
+            } catch (err) {
+                document.getElementById('scanner-grid').innerHTML = `<p class="text-red-500 text-sm">Scanner offline.</p>`;
+            }
+        };
 
         function selectTicker(ticker) {
             activeTicker = ticker;
-            document.querySelectorAll('.ticker-btn').forEach(btn => {
-                btn.className = "ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
-            });
-            const activeBtn = document.getElementById(`btn-${ticker}`);
-            if (activeBtn) {
-                activeBtn.className = "ticker-btn px-4 py-2 rounded-lg font-bold text-sm bg-accentblue text-slate-900 transition";
-            }
-            document.getElementById('status-label').innerText = `Selected ${ticker}. Click "GO" to analyze.`;
+            document.querySelectorAll('#scanner-grid button').forEach(b => b.classList.remove('active-ticker'));
+            document.getElementById(`btn-${ticker}`).classList.add('active-ticker');
         }
 
+        // 2. Execute Analysis
         async function executeAnalysis() {
-            // Show Loading
-            document.getElementById('landing-screen').classList.add('hidden');
-            document.getElementById('loading-screen').classList.remove('hidden');
+            if (!activeTicker) return alert("Please select an asset from the scanner first.");
+            
             document.getElementById('dashboard-view').classList.add('hidden');
-            document.getElementById('status-label').innerText = `Analyzing ${activeTicker}...`;
+            document.getElementById('loading-view').classList.remove('hidden');
+            
+            const friction = parseFloat(document.getElementById('slider-friction').value) / 100;
+            const neutral = parseFloat(document.getElementById('slider-neutral').value) / 100;
 
             try {
-                const response = await fetch(`${RENDER_BACKEND_URL}/api/analyze/${activeTicker}`);
-                if (!response.ok) throw new Error("Backend API call failed");
-                const data = await response.json();
-                latestTelemetryData = data;
+                const res = await fetch(`${RENDER_BACKEND_URL}/api/analyze/${activeTicker}?friction=${friction}&neutral_band=${neutral}`);
+                const data = await res.json();
+                latestData = data;
 
-                // Decision Cards
+                // Populate UI
                 document.getElementById('disp-ticker').innerText = data.ticker;
                 document.getElementById('disp-model').innerText = data.best_model;
                 document.getElementById('disp-prob').innerText = `${data.quant_probability}%`;
                 document.getElementById('disp-regime').innerText = data.current_regime;
+                
+                const sigEl = document.getElementById('disp-signal');
+                sigEl.innerText = data.quant_signal;
+                sigEl.style.color = data.quant_signal === "BULLISH" ? "#38a169" : data.quant_signal === "BEARISH" ? "#e53e3e" : "#d69e2e";
 
-                // Conviction Badge Styling
-                const sigBadge = document.getElementById('disp-signal');
-                sigBadge.innerText = data.quant_signal;
-                if (data.quant_signal === "BULLISH") {
-                    sigBadge.className = "px-3 py-1 rounded-md font-bold text-sm bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
-                } else if (data.quant_signal === "BEARISH") {
-                    sigBadge.className = "px-3 py-1 rounded-md font-bold text-sm bg-rose-500/20 text-rose-400 border border-rose-500/30";
-                } else {
-                    sigBadge.className = "px-3 py-1 rounded-md font-bold text-sm bg-amber-500/20 text-amber-400 border border-amber-500/30";
-                }
-
-                // AI Overlay
-                document.getElementById('disp-ai-score').innerText = `Score: ${data.ai_sentiment_score}`;
+                document.getElementById('disp-ai-score').innerText = data.ai_sentiment_score;
                 document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
 
-                // Returns
                 document.getElementById('disp-ret-bh').innerText = `${data.performance.buy_and_hold_pct}%`;
                 document.getElementById('disp-ret-unfilt').innerText = `${data.performance.unfiltered_strat_pct}%`;
                 document.getElementById('disp-ret-filt').innerText = `${data.performance.filtered_strat_pct}%`;
 
-                // Diagnostics
                 document.getElementById('disp-diag-unfilt-trades').innerText = data.diagnostics.unfiltered_trades;
                 document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
                 document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
                 document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
 
-                // Render Chart
-                renderChart(data.chart_data);
+                renderSmoothChart(data.chart_data);
 
-                // Show Dashboard
-                document.getElementById('loading-screen').classList.add('hidden');
+                document.getElementById('loading-view').classList.add('hidden');
                 document.getElementById('dashboard-view').classList.remove('hidden');
-                document.getElementById('status-label').innerText = `Analysis Complete for ${activeTicker}`;
 
-            } catch (err) {
-                alert(`Error executing analysis: ${err.message}`);
-                document.getElementById('loading-screen').classList.add('hidden');
-                document.getElementById('status-label').innerText = `Analysis Failed`;
+            } catch(e) {
+                alert("Analysis failed: " + e.message);
+                document.getElementById('loading-view').classList.add('hidden');
             }
         }
 
-        function copyTelemetryOutput() {
-            if (!latestTelemetryData) {
-                alert("Please click GO to run an analysis first before copying telemetry.");
-                return;
-            }
-
-            const formattedText = `=== MLFP QUANT ENGINE TELEMETRY OUTPUT ===
-Asset Ticker: ${latestTelemetryData.ticker}
-Quant Signal: ${latestTelemetryData.quant_signal} (Bullish Probability: ${latestTelemetryData.quant_probability}%)
-Winning ML Model: ${latestTelemetryData.best_model}
-Current Volatility Regime: ${latestTelemetryData.current_regime}
-
---- GEMINI LLM CATALYST OVERLAY ---
-Sentiment Score: ${latestTelemetryData.ai_sentiment_score}
-Executive Summary: "${latestTelemetryData.ai_summary}"
-
---- BACKTEST PERFORMANCE COMPARISON ---
-Buy & Hold Benchmark Return: ${latestTelemetryData.performance.buy_and_hold_pct}%
-Naive Unfiltered Strategy Return: ${latestTelemetryData.performance.unfiltered_strat_pct}%
-Regime-Filtered Strategy Return: ${latestTelemetryData.performance.filtered_strat_pct}%
-
---- TURNOVER & FRICTION DIAGNOSTICS ---
-Unfiltered Position Flips: ${latestTelemetryData.diagnostics.unfiltered_trades} (Friction Drag: ${latestTelemetryData.diagnostics.unfiltered_friction_pct}%)
-Regime-Filtered Position Flips: ${latestTelemetryData.diagnostics.filtered_trades} (Friction Drag: ${latestTelemetryData.diagnostics.filtered_friction_pct}%)
-===========================================`;
-
-            navigator.clipboard.writeText(formattedText).then(() => {
-                const copyTextSpan = document.getElementById('copy-btn-text');
-                copyTextSpan.innerText = "Copied to Clipboard! ✓";
-                setTimeout(() => { copyTextSpan.innerText = "Copy Telemetry Output"; }, 2500);
-            }).catch(err => {
-                alert("Failed to copy to clipboard: " + err);
-            });
-        }
-
-        function renderChart(chartData) {
+        // Smooth Gradient Chart
+        function renderSmoothChart(cd) {
             const ctx = document.getElementById('pnlChart').getContext('2d');
             if (chartInstance) chartInstance.destroy();
+
+            // Gradients
+            const gradBlue = ctx.createLinearGradient(0, 0, 0, 300);
+            gradBlue.addColorStop(0, 'rgba(90, 129, 250, 0.2)');
+            gradBlue.addColorStop(1, 'rgba(90, 129, 250, 0)');
+
+            const gradGreen = ctx.createLinearGradient(0, 0, 0, 300);
+            gradGreen.addColorStop(0, 'rgba(56, 161, 105, 0.2)');
+            gradGreen.addColorStop(1, 'rgba(56, 161, 105, 0)');
 
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: chartData.labels,
+                    labels: cd.labels,
                     datasets: [
-                        {
-                            label: 'Buy & Hold Benchmark',
-                            data: chartData.buy_hold,
-                            borderColor: '#38BDF8',
-                            borderWidth: 2,
-                            pointRadius: 0
-                        },
-                        {
-                            label: 'Naive Unfiltered Strategy',
-                            data: chartData.unfiltered,
-                            borderColor: '#EF4444',
-                            borderWidth: 1.5,
-                            borderDash: [5, 5],
-                            pointRadius: 0
-                        },
-                        {
-                            label: 'Regime-Filtered Strategy (Low-Vol Only)',
-                            data: chartData.filtered,
-                            borderColor: '#22C55E',
-                            borderWidth: 2.5,
-                            pointRadius: 0
-                        }
+                        { label: 'Buy & Hold', data: cd.buy_hold, borderColor: '#5a81fa', backgroundColor: gradBlue, fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2 },
+                        { label: 'Naive Strategy', data: cd.unfiltered, borderColor: '#e53e3e', borderDash: [5, 5], tension: 0.4, pointRadius: 0, borderWidth: 1.5, fill: false },
+                        { label: 'Regime-Filtered', data: cd.filtered, borderColor: '#38a169', backgroundColor: gradGreen, fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5 }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#94A3B8' } }
-                    },
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#788293', font: { family: 'Poppins' } } } },
                     scales: {
-                        x: { ticks: { color: '#64748B', maxTicksLimit: 10 }, grid: { color: '#334155' } },
-                        y: { ticks: { color: '#64748B' }, grid: { color: '#334155' } }
-                    }
+                        x: { display: false }, // Hide grid for clean Neumorphic look
+                        y: { ticks: { color: '#788293' }, grid: { color: 'rgba(0,0,0,0.03)' } }
+                    },
+                    animation: { duration: 1500, easing: 'easeOutQuart' }
                 }
             });
+        }
+
+        function copyTelemetryOutput() {
+            if (!latestData) return alert("Run analysis first.");
+            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker}\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%`;
+            navigator.clipboard.writeText(txt);
+            const btn = document.getElementById('copy-btn-text');
+            btn.innerText = "Copied!";
+            setTimeout(() => btn.innerText = "Copy Telemetry", 2000);
         }
     </script>
 </body>
