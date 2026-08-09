@@ -82,7 +82,7 @@
             box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
         }
 
-        /* Staggered Entrance Animations */
+        /* Staggered Animations */
         .fade-in-up {
             opacity: 0; transform: translateY(20px);
             animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -91,7 +91,6 @@
         .delay-1 { animation-delay: 0.1s; }
         .delay-2 { animation-delay: 0.2s; }
         .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
 
         /* Status Dot */
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
@@ -99,11 +98,14 @@
         .dot-red { background: #e53e3e; box-shadow: 0 0 10px #e53e3e; }
         .dot-yellow { background: #d69e2e; box-shadow: 0 0 10px #d69e2e; }
         @keyframes pulseG { 0% { box-shadow: 0 0 0 0 rgba(56, 161, 105, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(56, 161, 105, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 161, 105, 0); } }
+
+        /* Animated Progress Bar */
+        .progress-bar-container { width: 100%; height: 6px; border-radius: 10px; overflow: hidden; margin-top: 1.5rem; }
+        .progress-bar { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; transition: width 0.3s ease; }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
 
-    <!-- Ambient Background -->
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
 
@@ -112,8 +114,7 @@
         <!-- Header -->
         <header class="fade-in-up flex flex-col md:flex-row justify-between items-end gap-4">
             <div>
-                <h1 id="human-greeting" class="text-3xl md:text-4xl font-bold tracking-tight">Good morning.</h1>
-                <p class="text-muted mt-2 text-sm md:text-base">The AI Engine is awake. I have scanned the top Indian equities for you.</p>
+                <h1 id="human-greeting" class="text-4xl md:text-5xl font-bold tracking-tight">Good morning.</h1>
             </div>
             <button onclick="copyTelemetryOutput()" class="neo-btn px-5 py-2 text-sm text-muted flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
@@ -123,9 +124,17 @@
 
         <!-- Scanner Grid -->
         <div class="fade-in-up delay-1">
-            <h3 class="text-sm uppercase tracking-widest text-muted mb-4 font-semibold">Live Market Heatmap</h3>
+            <div class="flex items-center mb-4">
+                <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Live Market Heatmap</h3>
+                <!-- Tooltip -->
+                <div class="group relative inline-block ml-2 cursor-help">
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full neo-pressed text-xs text-muted hover:text-accent font-bold">?</span>
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-64 p-4 mt-2 text-xs text-muted neo-flat left-0 pointer-events-none">
+                        <strong class="text-dark">What is this?</strong><br>A quick scan of the market weather. <br><span class="text-green-600">Green</span> means safe to trade. <br><span class="text-red-500">Red</span> or <span class="text-yellow-600">Yellow</span> means high volatility or danger—stay cautious!
+                    </div>
+                </div>
+            </div>
             <div id="scanner-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <!-- Populated via JS -->
                 <div class="neo-pressed h-16 flex items-center justify-center text-sm text-muted animate-pulse col-span-full">
                     Scanning market regimes...
                 </div>
@@ -134,17 +143,36 @@
 
         <!-- Controls Area -->
         <div class="fade-in-up delay-2 neo-flat p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-            
             <div class="space-y-2">
-                <div class="flex justify-between text-sm"><span class="font-semibold">Friction Cost</span><span id="val-friction" class="text-accent font-bold">0.15%</span></div>
+                <div class="flex justify-between items-center text-sm">
+                    <div class="flex items-center">
+                        <span class="font-semibold">Friction Cost</span>
+                        <div class="group relative inline-block ml-2 cursor-help">
+                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-pressed text-[10px] text-muted hover:text-accent font-bold">?</span>
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat left-0 pointer-events-none">
+                                <strong class="text-dark">Friction Cost:</strong> Every time you buy or sell, you pay taxes and broker fees. Slide this to see how fees eat into your profits.
+                            </div>
+                        </div>
+                    </div>
+                    <span id="val-friction" class="text-accent font-bold">0.15%</span>
+                </div>
                 <input type="range" id="slider-friction" min="0" max="0.50" step="0.01" value="0.15" oninput="document.getElementById('val-friction').innerText = this.value + '%'">
-                <p class="text-xs text-muted">Simulates brokerage & tax drag.</p>
             </div>
 
             <div class="space-y-2">
-                <div class="flex justify-between text-sm"><span class="font-semibold">Conviction Zone</span><span id="val-neutral" class="text-accent font-bold">± 5%</span></div>
+                <div class="flex justify-between items-center text-sm">
+                    <div class="flex items-center">
+                        <span class="font-semibold">Conviction Zone</span>
+                        <div class="group relative inline-block ml-2 cursor-help">
+                            <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-pressed text-[10px] text-muted hover:text-accent font-bold">?</span>
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat left-0 pointer-events-none">
+                                <strong class="text-dark">Conviction Zone:</strong> Tells the AI not to guess. If the prediction is a 50/50 coin flip, this zone forces the system to stay NEUTRAL and protect your money.
+                            </div>
+                        </div>
+                    </div>
+                    <span id="val-neutral" class="text-accent font-bold">± 5%</span>
+                </div>
                 <input type="range" id="slider-neutral" min="0" max="15" step="1" value="5" oninput="document.getElementById('val-neutral').innerText = '± ' + this.value + '%'">
-                <p class="text-xs text-muted">Forces flat position if prediction is unsure.</p>
             </div>
 
             <div class="text-right">
@@ -154,26 +182,34 @@
             </div>
         </div>
 
-        <!-- Loading State -->
-        <div id="loading-view" class="hidden neo-pressed p-12 text-center fade-in-up">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-accent border-t-transparent mb-4"></div>
-            <h3 class="text-xl font-semibold">Synthesizing Data...</h3>
-            <p class="text-muted text-sm mt-2">Running walk-forward ML validations and querying Gemini LLM.</p>
+        <!-- Engaging Loading State -->
+        <div id="loading-view" class="hidden neo-flat p-12 max-w-2xl mx-auto text-center fade-in-up">
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent border-t-transparent mb-6"></div>
+            <h3 class="text-2xl font-bold text-dark">Processing Intelligence</h3>
+            <p id="loading-text-dynamic" class="text-accent font-medium text-sm mt-3 h-6 transition-all duration-300">Initiating analysis sequence...</p>
+            <div class="progress-bar-container neo-pressed">
+                <div id="dynamic-progress" class="progress-bar"></div>
+            </div>
         </div>
 
         <!-- Dashboard View -->
         <div id="dashboard-view" class="hidden space-y-8 fade-in-up">
             
-            <!-- Context & Signal -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- AI Conversational Box -->
+                <!-- AI Box -->
                 <div class="neo-flat p-8 flex flex-col justify-between">
                     <div>
-                        <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">AI Executive Brief</h3>
-                        <div class="neo-pressed p-5 mt-4">
-                            <p id="disp-ai-summary" class="text-base leading-relaxed italic text-dark">
-                                "..."
-                            </p>
+                        <div class="flex items-center mb-4">
+                            <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">AI Executive Brief</h3>
+                            <div class="group relative inline-block ml-2 cursor-help">
+                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full neo-pressed text-xs text-muted hover:text-accent font-bold">?</span>
+                                <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-64 p-4 mt-2 text-xs text-muted neo-flat left-0 pointer-events-none">
+                                    <strong class="text-dark">AI Brief:</strong> The Gemini AI reads the latest human news headlines for this stock and gives you a 1-sentence summary of the mood.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="neo-pressed p-5">
+                            <p id="disp-ai-summary" class="text-base leading-relaxed italic text-dark">"..."</p>
                         </div>
                     </div>
                     <div class="mt-6 flex justify-between items-center text-sm">
@@ -196,23 +232,31 @@
                 </div>
             </div>
 
-            <!-- Returns -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="neo-flat p-6 text-center"><span class="text-xs text-muted uppercase tracking-wider">Benchmark Hold</span><p id="disp-ret-bh" class="text-2xl font-bold mt-1">0.00%</p></div>
-                <div class="neo-flat p-6 text-center"><span class="text-xs text-muted uppercase tracking-wider">Naive Strategy</span><p id="disp-ret-unfilt" class="text-2xl font-bold mt-1 text-red-500">0.00%</p></div>
-                <div class="neo-flat p-6 text-center"><span class="text-xs text-muted uppercase tracking-wider">Regime-Filtered</span><p id="disp-ret-filt" class="text-2xl font-bold mt-1 text-green-600">0.00%</p></div>
-            </div>
-
             <!-- Chart -->
             <div class="neo-flat p-6">
-                <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative P&L Projection</h3>
+                <div class="flex items-center mb-6">
+                    <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Cumulative P&L Projection</h3>
+                    <div class="group relative inline-block ml-2 cursor-help">
+                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full neo-pressed text-xs text-muted hover:text-accent font-bold">?</span>
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-64 p-4 mt-2 text-xs text-muted neo-flat left-0 pointer-events-none">
+                            <strong class="text-dark">P&L Chart:</strong> Shows what happens to your money over 2 years. Blue is holding the stock. Red is trading blindly. Green is our safe, filtered strategy.
+                        </div>
+                    </div>
+                </div>
                 <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
             
             <!-- Diagnostics -->
-            <div class="neo-flat p-6 grid grid-cols-2 gap-4 text-center text-sm">
-                <div><p class="text-muted mb-1">Unfiltered Trades / Friction</p><p class="font-bold"><span id="disp-diag-unfilt-trades">0</span> / <span id="disp-diag-unfilt-frict" class="text-red-500">0%</span></p></div>
-                <div><p class="text-muted mb-1">Filtered Trades / Friction</p><p class="font-bold"><span id="disp-diag-filt-trades">0</span> / <span id="disp-diag-filt-frict" class="text-green-600">0%</span></p></div>
+            <div class="neo-flat p-6 grid grid-cols-2 gap-4 text-center text-sm relative">
+                <div class="absolute top-4 right-4 group inline-block cursor-help">
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full neo-pressed text-xs text-muted hover:text-accent font-bold">?</span>
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute right-0 z-50 w-64 p-4 mt-2 text-xs text-muted neo-flat pointer-events-none text-left">
+                        <strong class="text-dark">Friction Drag:</strong> Shows how many times the AI bought/sold, and exactly how much total profit was destroyed by paying fees to brokers.
+                    </div>
+                </div>
+                
+                <div><p class="text-muted mb-1">Unfiltered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-unfilt-trades">0</span> / <span id="disp-diag-unfilt-frict" class="text-red-500">0%</span></p></div>
+                <div><p class="text-muted mb-1">Filtered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-filt-trades">0</span> / <span id="disp-diag-filt-frict" class="text-green-600">0%</span></p></div>
             </div>
 
         </div>
@@ -223,6 +267,7 @@
         let activeTicker = null;
         let latestData = null;
         let chartInstance = null;
+        let loaderInterval = null;
 
         // Humanly Greeting
         const hr = new Date().getHours();
@@ -257,12 +302,43 @@
             document.getElementById(`btn-${ticker}`).classList.add('active-ticker');
         }
 
+        // Engaging Loader Logic
+        function startLoadingSequence() {
+            const loadTexts = [
+                "Connecting to Upstox API...", 
+                "Fetching 2 years of historical ticks...",
+                "Running Walk-Forward Machine Learning...",
+                "Clustering K-Means Volatility Regimes...",
+                "Applying Friction & Conviction logic...",
+                "Querying Gemini AI for news sentiment..."
+            ];
+            
+            let i = 0;
+            const textEl = document.getElementById('loading-text-dynamic');
+            const barEl = document.getElementById('dynamic-progress');
+            
+            textEl.style.opacity = 0;
+            setTimeout(() => { textEl.innerText = loadTexts[0]; textEl.style.opacity = 1; }, 200);
+            barEl.style.width = "15%";
+
+            loaderInterval = setInterval(() => {
+                i++;
+                if(i < loadTexts.length) {
+                    textEl.style.opacity = 0;
+                    setTimeout(() => { textEl.innerText = loadTexts[i]; textEl.style.opacity = 1; }, 200);
+                    barEl.style.width = `${(i + 1) * 16}%`;
+                }
+            }, 800);
+        }
+
         // 2. Execute Analysis
         async function executeAnalysis() {
             if (!activeTicker) return alert("Please select an asset from the scanner first.");
             
             document.getElementById('dashboard-view').classList.add('hidden');
             document.getElementById('loading-view').classList.remove('hidden');
+            
+            startLoadingSequence();
             
             const friction = parseFloat(document.getElementById('slider-friction').value) / 100;
             const neutral = parseFloat(document.getElementById('slider-neutral').value) / 100;
@@ -272,34 +348,41 @@
                 const data = await res.json();
                 latestData = data;
 
-                // Populate UI
-                document.getElementById('disp-ticker').innerText = data.ticker;
-                document.getElementById('disp-model').innerText = data.best_model;
-                document.getElementById('disp-prob').innerText = `${data.quant_probability}%`;
-                document.getElementById('disp-regime').innerText = data.current_regime;
-                
-                const sigEl = document.getElementById('disp-signal');
-                sigEl.innerText = data.quant_signal;
-                sigEl.style.color = data.quant_signal === "BULLISH" ? "#38a169" : data.quant_signal === "BEARISH" ? "#e53e3e" : "#d69e2e";
+                // Stop Loader
+                clearInterval(loaderInterval);
+                document.getElementById('dynamic-progress').style.width = "100%";
 
-                document.getElementById('disp-ai-score').innerText = data.ai_sentiment_score;
-                document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
+                setTimeout(() => {
+                    // Populate UI
+                    document.getElementById('disp-ticker').innerText = data.ticker;
+                    document.getElementById('disp-model').innerText = data.best_model;
+                    document.getElementById('disp-prob').innerText = `${data.quant_probability}%`;
+                    document.getElementById('disp-regime').innerText = data.current_regime;
+                    
+                    const sigEl = document.getElementById('disp-signal');
+                    sigEl.innerText = data.quant_signal;
+                    sigEl.style.color = data.quant_signal === "BULLISH" ? "#38a169" : data.quant_signal === "BEARISH" ? "#e53e3e" : "#d69e2e";
 
-                document.getElementById('disp-ret-bh').innerText = `${data.performance.buy_and_hold_pct}%`;
-                document.getElementById('disp-ret-unfilt').innerText = `${data.performance.unfiltered_strat_pct}%`;
-                document.getElementById('disp-ret-filt').innerText = `${data.performance.filtered_strat_pct}%`;
+                    document.getElementById('disp-ai-score').innerText = data.ai_sentiment_score;
+                    document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
 
-                document.getElementById('disp-diag-unfilt-trades').innerText = data.diagnostics.unfiltered_trades;
-                document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
-                document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
-                document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
+                    document.getElementById('disp-ret-bh').innerText = `${data.performance.buy_and_hold_pct}%`;
+                    document.getElementById('disp-ret-unfilt').innerText = `${data.performance.unfiltered_strat_pct}%`;
+                    document.getElementById('disp-ret-filt').innerText = `${data.performance.filtered_strat_pct}%`;
 
-                renderSmoothChart(data.chart_data);
+                    document.getElementById('disp-diag-unfilt-trades').innerText = data.diagnostics.unfiltered_trades;
+                    document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
+                    document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
+                    document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
 
-                document.getElementById('loading-view').classList.add('hidden');
-                document.getElementById('dashboard-view').classList.remove('hidden');
+                    renderSmoothChart(data.chart_data);
+
+                    document.getElementById('loading-view').classList.add('hidden');
+                    document.getElementById('dashboard-view').classList.remove('hidden');
+                }, 400); // Slight delay for smooth visual transition
 
             } catch(e) {
+                clearInterval(loaderInterval);
                 alert("Analysis failed: " + e.message);
                 document.getElementById('loading-view').classList.add('hidden');
             }
@@ -310,7 +393,6 @@
             const ctx = document.getElementById('pnlChart').getContext('2d');
             if (chartInstance) chartInstance.destroy();
 
-            // Gradients
             const gradBlue = ctx.createLinearGradient(0, 0, 0, 300);
             gradBlue.addColorStop(0, 'rgba(90, 129, 250, 0.2)');
             gradBlue.addColorStop(1, 'rgba(90, 129, 250, 0)');
@@ -333,7 +415,7 @@
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { labels: { color: '#788293', font: { family: 'Poppins' } } } },
                     scales: {
-                        x: { display: false }, // Hide grid for clean Neumorphic look
+                        x: { display: false },
                         y: { ticks: { color: '#788293' }, grid: { color: 'rgba(0,0,0,0.03)' } }
                     },
                     animation: { duration: 1500, easing: 'easeOutQuart' }
