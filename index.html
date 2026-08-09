@@ -90,7 +90,6 @@
         @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
         .delay-1 { animation-delay: 0.1s; }
         .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
 
         /* Status Dot */
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
@@ -269,11 +268,10 @@
         let chartInstance = null;
         let loaderInterval = null;
 
-        // Humanly Greeting
+        // Humanly Greeting - Removed the extra line here.
         const hr = new Date().getHours();
         document.getElementById('human-greeting').innerText = (hr < 12) ? "Good morning." : (hr < 18) ? "Good afternoon." : "Good evening.";
 
-        // 1. Fetch Scanner on Load
         window.onload = async () => {
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/scanner`);
@@ -302,14 +300,13 @@
             document.getElementById(`btn-${ticker}`).classList.add('active-ticker');
         }
 
-        // Engaging Loader Logic
         function startLoadingSequence() {
             const loadTexts = [
                 "Connecting to Upstox API...", 
-                "Fetching 2 years of historical ticks...",
+                "Fetching historical ticks...",
                 "Running Walk-Forward Machine Learning...",
-                "Clustering K-Means Volatility Regimes...",
-                "Applying Friction & Conviction logic...",
+                "Deploying XGBoost Classifiers...",
+                "Clustering Volatility Regimes...",
                 "Querying Gemini AI for news sentiment..."
             ];
             
@@ -331,7 +328,6 @@
             }, 800);
         }
 
-        // 2. Execute Analysis
         async function executeAnalysis() {
             if (!activeTicker) return alert("Please select an asset from the scanner first.");
             
@@ -345,50 +341,60 @@
 
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/analyze/${activeTicker}?friction=${friction}&neutral_band=${neutral}`);
+                
+                // THE FIX: Properly check if the backend threw an error (like a timeout)
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.detail || "API Connection Failed. Please try again.");
+                }
+                
                 const data = await res.json();
                 latestData = data;
 
-                // Stop Loader
+                // Stop Loader Safely
                 clearInterval(loaderInterval);
                 document.getElementById('dynamic-progress').style.width = "100%";
 
                 setTimeout(() => {
-                    // Populate UI
-                    document.getElementById('disp-ticker').innerText = data.ticker;
-                    document.getElementById('disp-model').innerText = data.best_model;
-                    document.getElementById('disp-prob').innerText = `${data.quant_probability}%`;
-                    document.getElementById('disp-regime').innerText = data.current_regime;
-                    
-                    const sigEl = document.getElementById('disp-signal');
-                    sigEl.innerText = data.quant_signal;
-                    sigEl.style.color = data.quant_signal === "BULLISH" ? "#38a169" : data.quant_signal === "BEARISH" ? "#e53e3e" : "#d69e2e";
+                    try {
+                        document.getElementById('disp-ticker').innerText = data.ticker;
+                        document.getElementById('disp-model').innerText = data.best_model;
+                        document.getElementById('disp-prob').innerText = `${data.quant_probability}%`;
+                        document.getElementById('disp-regime').innerText = data.current_regime;
+                        
+                        const sigEl = document.getElementById('disp-signal');
+                        sigEl.innerText = data.quant_signal;
+                        sigEl.style.color = data.quant_signal === "BULLISH" ? "#38a169" : data.quant_signal === "BEARISH" ? "#e53e3e" : "#d69e2e";
 
-                    document.getElementById('disp-ai-score').innerText = data.ai_sentiment_score;
-                    document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
+                        document.getElementById('disp-ai-score').innerText = data.ai_sentiment_score;
+                        document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
 
-                    document.getElementById('disp-ret-bh').innerText = `${data.performance.buy_and_hold_pct}%`;
-                    document.getElementById('disp-ret-unfilt').innerText = `${data.performance.unfiltered_strat_pct}%`;
-                    document.getElementById('disp-ret-filt').innerText = `${data.performance.filtered_strat_pct}%`;
+                        document.getElementById('disp-ret-bh').innerText = `${data.performance.buy_and_hold_pct}%`;
+                        document.getElementById('disp-ret-unfilt').innerText = `${data.performance.unfiltered_strat_pct}%`;
+                        document.getElementById('disp-ret-filt').innerText = `${data.performance.filtered_strat_pct}%`;
 
-                    document.getElementById('disp-diag-unfilt-trades').innerText = data.diagnostics.unfiltered_trades;
-                    document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
-                    document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
-                    document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
+                        document.getElementById('disp-diag-unfilt-trades').innerText = data.diagnostics.unfiltered_trades;
+                        document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
+                        document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
+                        document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
 
-                    renderSmoothChart(data.chart_data);
+                        renderSmoothChart(data.chart_data);
 
-                    document.getElementById('loading-view').classList.add('hidden');
-                    document.getElementById('dashboard-view').classList.remove('hidden');
-                }, 400); // Slight delay for smooth visual transition
+                        document.getElementById('loading-view').classList.add('hidden');
+                        document.getElementById('dashboard-view').classList.remove('hidden');
+                    } catch (renderError) {
+                        alert("Error rendering dashboard: " + renderError.message);
+                    }
+                }, 400); 
 
             } catch(e) {
+                // Instantly break out of the infinite freeze if an error occurs
                 clearInterval(loaderInterval);
                 alert("Analysis failed: " + e.message);
                 document.getElementById('loading-view').classList.add('hidden');
             }
         }
 
-        // Smooth Gradient Chart
         function renderSmoothChart(cd) {
             const ctx = document.getElementById('pnlChart').getContext('2d');
             if (chartInstance) chartInstance.destroy();
