@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Advanced Neumorphism & Motion Graphics Engine */
+        /* Advanced Neumorphism Engine */
         :root {
             --bg: #e6e9ef;
             --text-dark: #3a4049;
@@ -25,7 +25,7 @@
             overflow-x: hidden;
         }
         
-        /* Floating Organic Background Orbs */
+        /* Floating Background Orbs */
         .bg-orb {
             position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.4; z-index: -1;
             animation: float 10s infinite ease-in-out alternate;
@@ -82,7 +82,7 @@
             box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
         }
 
-        /* Staggered Animations */
+        /* Animations */
         .fade-in-up {
             opacity: 0; transform: translateY(20px);
             animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -91,7 +91,7 @@
         .delay-1 { animation-delay: 0.1s; }
         .delay-2 { animation-delay: 0.2s; }
 
-        /* Status Dot */
+        /* Status Dots */
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
         .dot-green { background: #38a169; box-shadow: 0 0 10px #38a169; animation: pulseG 2s infinite; }
         .dot-red { background: #e53e3e; box-shadow: 0 0 10px #e53e3e; }
@@ -125,7 +125,6 @@
         <div class="fade-in-up delay-1">
             <div class="flex items-center mb-4">
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Live Market Heatmap</h3>
-                <!-- Tooltip -->
                 <div class="group relative inline-block ml-2 cursor-help">
                     <span class="inline-flex items-center justify-center w-5 h-5 rounded-full neo-pressed text-xs text-muted hover:text-accent font-bold">?</span>
                     <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-64 p-4 mt-2 text-xs text-muted neo-flat left-0 pointer-events-none">
@@ -231,6 +230,22 @@
                 </div>
             </div>
 
+            <!-- RESTORED: Strategy Return Percentage Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="neo-flat p-6 text-center">
+                    <span class="text-xs text-muted uppercase tracking-wider font-semibold">Benchmark Hold</span>
+                    <p id="disp-ret-bh" class="text-2xl font-bold mt-1">0.00%</p>
+                </div>
+                <div class="neo-flat p-6 text-center">
+                    <span class="text-xs text-muted uppercase tracking-wider font-semibold">Naive Strategy</span>
+                    <p id="disp-ret-unfilt" class="text-2xl font-bold mt-1 text-red-500">0.00%</p>
+                </div>
+                <div class="neo-flat p-6 text-center">
+                    <span class="text-xs text-muted uppercase tracking-wider font-semibold">Regime-Filtered</span>
+                    <p id="disp-ret-filt" class="text-2xl font-bold mt-1 text-green-600">0.00%</p>
+                </div>
+            </div>
+
             <!-- Chart -->
             <div class="neo-flat p-6">
                 <div class="flex items-center mb-6">
@@ -268,7 +283,6 @@
         let chartInstance = null;
         let loaderInterval = null;
 
-        // Humanly Greeting - Removed the extra line here.
         const hr = new Date().getHours();
         document.getElementById('human-greeting').innerText = (hr < 12) ? "Good morning." : (hr < 18) ? "Good afternoon." : "Good evening.";
 
@@ -342,7 +356,6 @@
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/analyze/${activeTicker}?friction=${friction}&neutral_band=${neutral}`);
                 
-                // THE FIX: Properly check if the backend threw an error (like a timeout)
                 if (!res.ok) {
                     const errData = await res.json();
                     throw new Error(errData.detail || "API Connection Failed. Please try again.");
@@ -351,7 +364,6 @@
                 const data = await res.json();
                 latestData = data;
 
-                // Stop Loader Safely
                 clearInterval(loaderInterval);
                 document.getElementById('dynamic-progress').style.width = "100%";
 
@@ -369,6 +381,7 @@
                         document.getElementById('disp-ai-score').innerText = data.ai_sentiment_score;
                         document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
 
+                        // Population of Return Cards
                         document.getElementById('disp-ret-bh').innerText = `${data.performance.buy_and_hold_pct}%`;
                         document.getElementById('disp-ret-unfilt').innerText = `${data.performance.unfiltered_strat_pct}%`;
                         document.getElementById('disp-ret-filt').innerText = `${data.performance.filtered_strat_pct}%`;
@@ -388,7 +401,6 @@
                 }, 400); 
 
             } catch(e) {
-                // Instantly break out of the infinite freeze if an error occurs
                 clearInterval(loaderInterval);
                 alert("Analysis failed: " + e.message);
                 document.getElementById('loading-view').classList.add('hidden');
