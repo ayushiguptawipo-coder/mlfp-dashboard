@@ -359,7 +359,7 @@
                     try {
                         document.getElementById('disp-ticker').innerText = data.ticker;
                         document.getElementById('disp-live-price').innerText = `₹${data.live_price}`;
-                        const changeText = data.day_change_pct >= 0 ? `+${data.day_change_pct}% Today` : `${data.day_change_pct}% Today`;
+                        const changeText = data.day_change_pct >= 0 ? `+₹${data.day_change_pct} Today` : `-₹${Math.abs(data.day_change_pct)} Today`;
                         const changeEl = document.getElementById('disp-live-change');
                         changeEl.innerText = `(${changeText})`;
                         changeEl.className = data.day_change_pct >= 0 ? "text-xs font-semibold text-emerald-600" : "text-xs font-semibold text-rose-500";
