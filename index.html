@@ -7,8 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- TradingView Lightweight Charts Library -->
-    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <!-- Pinned TradingView Lightweight Charts Library to prevent random breaking updates -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         :root {
             --bg: #e6e9ef; --text-dark: #3a4049; --text-muted: #788293;
@@ -131,9 +131,7 @@
         <!-- Dashboard View -->
         <div id="dashboard-view" class="hidden space-y-8 fade-in-up">
             
-            <!-- Top Row: AI Executive Brief & Asset Header Card -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- AI Brief -->
                 <div class="neo-flat p-8 flex flex-col justify-between">
                     <div>
                         <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-4">AI Executive Brief</h3>
@@ -147,13 +145,11 @@
                     </div>
                 </div>
 
-                <!-- Signal & Real-Time Price Card -->
                 <div class="neo-flat p-8 flex flex-col justify-between">
                     <div class="flex justify-between items-start">
                         <div>
                             <span class="text-xs uppercase tracking-widest text-muted font-semibold">Target Asset</span>
                             <h2 id="disp-ticker" class="text-4xl font-extrabold text-dark mt-1">---</h2>
-                            <!-- Live LTP & Daily Change -->
                             <div class="flex items-baseline gap-2 mt-1">
                                 <span id="disp-live-price" class="text-2xl font-bold text-accent">₹---</span>
                                 <span id="disp-live-change" class="text-xs font-semibold text-muted">(--)</span>
@@ -170,7 +166,6 @@
                 </div>
             </div>
 
-            <!-- Strategy Return Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="neo-flat p-6 text-center">
                     <span class="text-xs text-muted uppercase tracking-wider font-semibold">Benchmark Hold</span>
@@ -186,7 +181,6 @@
                 </div>
             </div>
 
-            <!-- Candlestick Chart Card -->
             <div class="neo-flat p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Asset Price Action (Candlesticks)</h3>
@@ -195,13 +189,11 @@
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
             </div>
 
-            <!-- Cumulative P&L Projection Chart -->
             <div class="neo-flat p-6">
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative Out-of-Sample P&L</h3>
                 <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
             
-            <!-- Diagnostics -->
             <div class="neo-flat p-6 grid grid-cols-2 gap-4 text-center text-sm relative">
                 <div><p class="text-muted mb-1">Unfiltered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-unfilt-trades">0</span> / <span id="disp-diag-unfilt-frict" class="text-red-500">0%</span></p></div>
                 <div><p class="text-muted mb-1">Filtered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-filt-trades">0</span> / <span id="disp-diag-filt-frict" class="text-green-600">0%</span></p></div>
@@ -224,7 +216,6 @@
         const hr = new Date().getHours();
         document.getElementById('human-greeting').innerText = (hr < 12) ? "Good morning." : (hr < 18) ? "Good afternoon." : "Good evening.";
 
-        // Initial Load: Live Watchlist
         window.onload = async () => {
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/scanner`);
@@ -308,7 +299,7 @@
 
         function startLoadingSequence() {
             const loadTexts = [
-                `Connecting to Upstox for ${activeTicker}...`, 
+                `Locating ${activeTicker} via Upstox API...`, 
                 "Fetching real-time market quotes...",
                 "Constructing OHLC candlestick matrix...",
                 "Running Walk-Forward ML validation...",
@@ -359,9 +350,13 @@
                 clearInterval(loaderInterval);
                 document.getElementById('dynamic-progress').style.width = "100%";
 
+                // THE FIX: Unhide the dashboard FIRST so the browser calculates chart widths properly
+                document.getElementById('loading-view').classList.add('hidden');
+                document.getElementById('dashboard-view').classList.remove('hidden');
+
+                // Wait 50 milliseconds for the DOM to render the visible dashboard before drawing charts
                 setTimeout(() => {
                     try {
-                        // Populate Asset & Live Price Card
                         document.getElementById('disp-ticker').innerText = data.ticker;
                         document.getElementById('disp-live-price').innerText = `₹${data.live_price}`;
                         const changeText = data.day_change_pct >= 0 ? `+${data.day_change_pct}% Today` : `${data.day_change_pct}% Today`;
@@ -389,16 +384,14 @@
                         document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
                         document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
 
-                        // Render Both Charts
+                        // Draw Charts AFTER container width is > 0
                         renderCandleChart(data.candles);
                         renderSmoothPnlChart(data.chart_data);
 
-                        document.getElementById('loading-view').classList.add('hidden');
-                        document.getElementById('dashboard-view').classList.remove('hidden');
                     } catch (renderError) {
-                        alert("Error rendering dashboard: " + renderError.message);
+                        alert("Error rendering dashboard data: " + renderError.message);
                     }
-                }, 400); 
+                }, 50); 
 
             } catch(e) {
                 clearInterval(loaderInterval);
@@ -407,10 +400,16 @@
             }
         }
 
-        // --- TRADINGVIEW LIGHTWEIGHT CANDLESTICK CHART ---
+        // --- TRADINGVIEW LIGHTWEIGHT CANDLESTICK CHART (FIXED) ---
         function renderCandleChart(candleData) {
             const container = document.getElementById('candleChartContainer');
-            container.innerHTML = ''; // Clear prior instance
+            
+            // Explicitly destroy the old chart memory instance so it doesn't crash on reload
+            if (candleChartInstance) {
+                candleChartInstance.remove();
+                candleChartInstance = null;
+            }
+            container.innerHTML = ''; 
             
             candleChartInstance = LightweightCharts.createChart(container, {
                 width: container.clientWidth,
@@ -440,9 +439,10 @@
             candleSeries.setData(candleData);
             candleChartInstance.timeScale().fitContent();
 
-            // Auto-resize on window adjustment
             window.addEventListener('resize', () => {
-                if (candleChartInstance) candleChartInstance.applyOptions({ width: container.clientWidth });
+                if (candleChartInstance && container.clientWidth > 0) {
+                    candleChartInstance.applyOptions({ width: container.clientWidth });
+                }
             });
         }
 
