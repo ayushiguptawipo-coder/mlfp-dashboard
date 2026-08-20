@@ -130,7 +130,6 @@
         <!-- Dashboard View -->
         <div id="dashboard-view" class="hidden space-y-8 fade-in-up">
             
-            <!-- Top Row: AI Executive Brief & Asset Header Card -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- AI Brief -->
                 <div class="neo-flat p-8 flex flex-col justify-between">
@@ -193,13 +192,25 @@
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
             </div>
 
+            <!-- NEW: 1-Year Algorithmic Projection Chart -->
+            <div id="forecast-container" class="neo-flat p-6 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">1-Year Algorithmic Projection</h3>
+                        <p class="text-[10px] text-muted mt-1">Log-Drift Extrapolation with 95% Confidence Interval</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-[10px] font-bold neo-pressed text-accent">Time-Series Extrapolation</span>
+                </div>
+                <div class="relative h-80 w-full"><canvas id="forecastChart"></canvas></div>
+            </div>
+
             <!-- Cumulative P&L Projection Chart -->
             <div class="neo-flat p-6">
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative Out-of-Sample P&L</h3>
                 <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
 
-            <!-- NEW: INSTITUTIONAL FUNDAMENTAL HEALTH PANEL -->
+            <!-- INSTITUTIONAL FUNDAMENTAL HEALTH PANEL -->
             <div class="neo-flat p-8 space-y-6">
                 <div class="flex justify-between items-center border-b border-gray-300 pb-4">
                     <div>
@@ -211,7 +222,6 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
-                    <!-- 1. Altman Z-Score Card -->
                     <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-center mb-2">
@@ -219,7 +229,7 @@
                                 <div class="group relative inline-block cursor-help">
                                     <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
                                     <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
-                                        <strong class="text-dark">Bankruptcy Risk Gauge:</strong> Predicts solvency over 2 years. <br><span class="text-green-600 font-bold">>2.99: Safe Zone</span><br><span class="text-yellow-600 font-bold">1.8-2.99: Grey Zone</span><br><span class="text-red-500 font-bold"><1.81: Distress Zone</span>
+                                        <strong class="text-dark">Bankruptcy Risk Gauge:</strong> Predicts solvency over 2 years.
                                     </div>
                                 </div>
                             </div>
@@ -227,15 +237,14 @@
                                 <span id="fund-z-score" class="text-3xl font-extrabold text-dark">0.00</span>
                                 <span id="fund-z-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat text-emerald-600">Safe Zone</span>
                             </div>
-                            <p id="fund-z-desc" class="text-xs text-muted mt-3 leading-relaxed">Pristine balance sheet with negligible bankruptcy risk.</p>
+                            <p id="fund-z-desc" class="text-xs text-muted mt-3 leading-relaxed">...</p>
                         </div>
                         <div class="mt-4 pt-3 border-t border-gray-300 text-[11px] text-muted flex justify-between">
                             <span>Solvency Health:</span>
-                            <span id="fund-z-verdict" class="font-semibold text-dark">Strong Buffer</span>
+                            <span id="fund-z-verdict" class="font-semibold text-dark">...</span>
                         </div>
                     </div>
 
-                    <!-- 2. DuPont Analysis Card -->
                     <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-center mb-2">
@@ -243,7 +252,7 @@
                                 <div class="group relative inline-block cursor-help">
                                     <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
                                     <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
-                                        <strong class="text-dark">ROE Decomposition:</strong> Breaks Return on Equity into 3 components: Profit Margin (Power) × Asset Turnover (Speed) × Financial Leverage (Debt).
+                                        <strong class="text-dark">ROE Decomposition:</strong> Breaks Return on Equity into Margin × Turnover × Leverage.
                                     </div>
                                 </div>
                             </div>
@@ -266,10 +275,9 @@
                                 </div>
                             </div>
                         </div>
-                        <p id="fund-dupont-verdict" class="text-[11px] text-muted mt-3 italic">ROE Driver: Healthy operating efficiency & low debt.</p>
+                        <p id="fund-dupont-verdict" class="text-[11px] text-muted mt-3 italic">...</p>
                     </div>
 
-                    <!-- 3. Economic Value Added (EVA) Card -->
                     <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-center mb-2">
@@ -277,7 +285,7 @@
                                 <div class="group relative inline-block cursor-help">
                                     <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
                                     <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
-                                        <strong class="text-dark">True Economic Profit:</strong> Net profit after paying all operational expenses and deducting the full cost of capital (WACC). Positive means real wealth creation.
+                                        <strong class="text-dark">True Economic Profit:</strong> Net profit after paying all expenses and deducting the cost of capital.
                                     </div>
                                 </div>
                             </div>
@@ -290,7 +298,7 @@
                                 <div class="flex justify-between text-muted"><span>Cost of Capital (WACC):</span><span id="fund-eva-wacc" class="font-bold text-dark">0.0%</span></div>
                             </div>
                         </div>
-                        <p id="fund-eva-verdict" class="text-[11px] text-muted mt-3 leading-tight">Generates wealth above investor hurdle rates.</p>
+                        <p id="fund-eva-verdict" class="text-[11px] text-muted mt-3 leading-tight">...</p>
                     </div>
 
                 </div>
@@ -312,6 +320,7 @@
         let latestData = null;
         let pnlChartInstance = null;
         let candleChartInstance = null;
+        let forecastChartInstance = null;
         let candleSeries = null;
         let loaderInterval = null;
         let searchTimeout = null;
@@ -357,12 +366,7 @@
         async function debounceSearch(query) {
             clearTimeout(searchTimeout);
             const dropdown = document.getElementById('search-dropdown');
-            
-            if(query.length < 2) {
-                dropdown.classList.add('hidden');
-                return;
-            }
-            
+            if(query.length < 2) { dropdown.classList.add('hidden'); return; }
             dropdown.innerHTML = `<div class="p-5 text-sm text-muted animate-pulse">Searching Upstox Database...</div>`;
             dropdown.classList.remove('hidden');
 
@@ -370,25 +374,13 @@
                 try {
                     const res = await fetch(`${RENDER_BACKEND_URL}/api/search?q=${encodeURIComponent(query)}`);
                     const data = await res.json();
-                    
-                    if(data.results.length === 0) {
-                        dropdown.innerHTML = `<div class="p-5 text-sm text-muted">No stocks found matching "${query}".</div>`;
-                        return;
-                    }
-                    
+                    if(data.results.length === 0) { dropdown.innerHTML = `<div class="p-5 text-sm text-muted">No stocks found.</div>`; return; }
                     let html = '';
                     data.results.forEach(stock => {
-                        html += `
-                            <div onclick="selectFromSearch('${stock.ticker}', '${stock.instrument_key}')" class="p-4 hover:bg-[#d1d5db] cursor-pointer border-b border-[#c4c7cc] last:border-0 transition-colors">
-                                <div class="font-bold text-dark">${stock.ticker}</div>
-                                <div class="text-xs text-muted mt-1">${stock.name}</div>
-                            </div>
-                        `;
+                        html += `<div onclick="selectFromSearch('${stock.ticker}', '${stock.instrument_key}')" class="p-4 hover:bg-[#d1d5db] cursor-pointer border-b border-[#c4c7cc] last:border-0 transition-colors"><div class="font-bold text-dark">${stock.ticker}</div><div class="text-xs text-muted mt-1">${stock.name}</div></div>`;
                     });
                     dropdown.innerHTML = html;
-                } catch(e) {
-                    dropdown.innerHTML = `<div class="p-5 text-sm text-red-500">Search connection failed.</div>`;
-                }
+                } catch(e) { dropdown.innerHTML = `<div class="p-5 text-sm text-red-500">Search connection failed.</div>`; }
             }, 400);
         }
 
@@ -403,17 +395,15 @@
         function startLoadingSequence() {
             const loadTexts = [
                 `Connecting to Upstox for ${activeTicker}...`, 
-                "Fetching real-time market quotes...",
+                "Computing 1-Year Time-Series Probability Cone...",
                 "Running Altman Z-Score & DuPont Solvency Engines...",
-                "Computing Economic Value Added (EVA & WACC)...",
-                "Deploying LightGBM & CatBoost Classifiers...",
+                "Computing Economic Value Added (EVA)...",
+                "Deploying LightGBM Classifiers...",
                 "Querying Gemini AI for Catalyst Sentiment..."
             ];
-            
             let i = 0;
             const textEl = document.getElementById('loading-text-dynamic');
             const barEl = document.getElementById('dynamic-progress');
-            
             textEl.style.opacity = 0;
             setTimeout(() => { textEl.innerText = loadTexts[0]; textEl.style.opacity = 1; }, 200);
             barEl.style.width = "15%";
@@ -429,11 +419,9 @@
         }
 
         async function executeAnalysis() {
-            if (!activeTicker) return alert("Please search for a stock or select one from the watchlist first.");
-            
+            if (!activeTicker) return alert("Please select a stock first.");
             document.getElementById('dashboard-view').classList.add('hidden');
             document.getElementById('loading-view').classList.remove('hidden');
-            
             startLoadingSequence();
             
             const friction = parseFloat(document.getElementById('slider-friction').value) / 100;
@@ -442,17 +430,12 @@
 
             try {
                 const res = await fetch(endpointUrl);
-                if (!res.ok) {
-                    const errData = await res.json();
-                    throw new Error(errData.detail || "API Connection Failed.");
-                }
-                
+                if (!res.ok) throw new Error((await res.json()).detail || "API Connection Failed.");
                 const data = await res.json();
                 latestData = data;
 
                 clearInterval(loaderInterval);
                 document.getElementById('dynamic-progress').style.width = "100%";
-
                 document.getElementById('loading-view').classList.add('hidden');
                 document.getElementById('dashboard-view').classList.remove('hidden');
 
@@ -460,7 +443,6 @@
                     try {
                         document.getElementById('disp-ticker').innerText = data.ticker;
                         document.getElementById('disp-live-price').innerText = `₹${data.live_price}`;
-                        
                         const changeText = data.day_change_val >= 0 ? `+₹${data.day_change_val} Today` : `-₹${Math.abs(data.day_change_val)} Today`;
                         const changeEl = document.getElementById('disp-live-change');
                         changeEl.innerText = `(${changeText})`;
@@ -486,11 +468,8 @@
                         document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
                         document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
 
-                        // Populate Institutional Fundamental Metrics
                         if (data.fundamentals) {
                             const f = data.fundamentals;
-                            
-                            // Altman Z
                             document.getElementById('fund-z-score').innerText = f.altman_z.score;
                             const zBadge = document.getElementById('fund-z-badge');
                             zBadge.innerText = f.altman_z.zone;
@@ -498,14 +477,12 @@
                             document.getElementById('fund-z-desc').innerText = f.altman_z.desc;
                             document.getElementById('fund-z-verdict').innerText = f.altman_z.zone === "Safe Zone" ? "Strong Solvency" : (f.altman_z.zone === "Grey Zone" ? "Moderate Solvency" : "Distressed");
 
-                            // DuPont
                             document.getElementById('fund-dupont-roe').innerText = `${f.dupont.roe}%`;
                             document.getElementById('fund-dupont-margin').innerText = `${f.dupont.profit_margin}%`;
                             document.getElementById('fund-dupont-turnover').innerText = `${f.dupont.asset_turnover}x`;
                             document.getElementById('fund-dupont-leverage').innerText = `${f.dupont.financial_leverage}x`;
                             document.getElementById('fund-dupont-verdict').innerText = f.dupont.verdict;
 
-                            // EVA
                             document.getElementById('fund-eva-score').innerText = `₹${f.eva.eva_cr} Cr`;
                             const evaBadge = document.getElementById('fund-eva-badge');
                             evaBadge.innerText = f.eva.status;
@@ -517,12 +494,10 @@
 
                         renderCandleChart(data.candles);
                         renderSmoothPnlChart(data.chart_data);
+                        renderForecastChart(data.forecast_data);
 
-                    } catch (renderError) {
-                        alert("Error rendering dashboard data: " + renderError.message);
-                    }
+                    } catch (renderError) { alert("Error rendering dashboard: " + renderError.message); }
                 }, 50); 
-
             } catch(e) {
                 clearInterval(loaderInterval);
                 alert("Analysis failed: " + e.message);
@@ -532,59 +507,24 @@
 
         function renderCandleChart(candleData) {
             const container = document.getElementById('candleChartContainer');
-            if (candleChartInstance) {
-                candleChartInstance.remove();
-                candleChartInstance = null;
-            }
+            if (candleChartInstance) { candleChartInstance.remove(); candleChartInstance = null; }
             container.innerHTML = ''; 
-            
             candleChartInstance = LightweightCharts.createChart(container, {
-                width: container.clientWidth,
-                height: 300,
-                layout: {
-                    background: { type: 'solid', color: 'transparent' },
-                    textColor: '#788293',
-                    fontFamily: 'Poppins'
-                },
-                grid: {
-                    vertLines: { color: 'rgba(0, 0, 0, 0.04)' },
-                    horzLines: { color: 'rgba(0, 0, 0, 0.04)' }
-                },
-                crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-                rightPriceScale: { borderColor: 'rgba(0, 0, 0, 0.1)' },
-                timeScale: { borderColor: 'rgba(0, 0, 0, 0.1)' }
+                width: container.clientWidth, height: 300,
+                layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#788293', fontFamily: 'Poppins' },
+                grid: { vertLines: { color: 'rgba(0, 0, 0, 0.04)' }, horzLines: { color: 'rgba(0, 0, 0, 0.04)' } },
+                crosshair: { mode: LightweightCharts.CrosshairMode.Normal }, rightPriceScale: { borderColor: 'rgba(0, 0, 0, 0.1)' }, timeScale: { borderColor: 'rgba(0, 0, 0, 0.1)' }
             });
-
-            candleSeries = candleChartInstance.addCandlestickSeries({
-                upColor: '#22c55e',
-                downColor: '#ef4444',
-                borderVisible: false,
-                wickUpColor: '#22c55e',
-                wickDownColor: '#ef4444'
-            });
-
+            candleSeries = candleChartInstance.addCandlestickSeries({ upColor: '#22c55e', downColor: '#ef4444', borderVisible: false, wickUpColor: '#22c55e', wickDownColor: '#ef4444' });
             candleSeries.setData(candleData);
             candleChartInstance.timeScale().fitContent();
-
-            window.addEventListener('resize', () => {
-                if (candleChartInstance && container.clientWidth > 0) {
-                    candleChartInstance.applyOptions({ width: container.clientWidth });
-                }
-            });
         }
 
         function renderSmoothPnlChart(cd) {
             const ctx = document.getElementById('pnlChart').getContext('2d');
             if (pnlChartInstance) pnlChartInstance.destroy();
-
-            const gradBlue = ctx.createLinearGradient(0, 0, 0, 300);
-            gradBlue.addColorStop(0, 'rgba(90, 129, 250, 0.2)');
-            gradBlue.addColorStop(1, 'rgba(90, 129, 250, 0)');
-
-            const gradGreen = ctx.createLinearGradient(0, 0, 0, 300);
-            gradGreen.addColorStop(0, 'rgba(56, 161, 105, 0.2)');
-            gradGreen.addColorStop(1, 'rgba(56, 161, 105, 0)');
-
+            const gradBlue = ctx.createLinearGradient(0, 0, 0, 300); gradBlue.addColorStop(0, 'rgba(90, 129, 250, 0.2)'); gradBlue.addColorStop(1, 'rgba(90, 129, 250, 0)');
+            const gradGreen = ctx.createLinearGradient(0, 0, 0, 300); gradGreen.addColorStop(0, 'rgba(56, 161, 105, 0.2)'); gradGreen.addColorStop(1, 'rgba(56, 161, 105, 0)');
             pnlChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -595,21 +535,60 @@
                         { label: 'Regime-Filtered', data: cd.filtered, borderColor: '#38a169', backgroundColor: gradGreen, fill: true, tension: 0.4, pointRadius: 0, borderWidth: 2.5 }
                     ]
                 },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#788293', font: { family: 'Poppins' } } } }, scales: { x: { display: false }, y: { ticks: { color: '#788293' }, grid: { color: 'rgba(0,0,0,0.03)' } } }, animation: { duration: 1500, easing: 'easeOutQuart' } }
+            });
+        }
+
+        function renderForecastChart(fd) {
+            const container = document.getElementById('forecast-container');
+            if (!fd) { container.classList.add('hidden'); return; }
+            container.classList.remove('hidden');
+
+            const ctx = document.getElementById('forecastChart').getContext('2d');
+            if (forecastChartInstance) forecastChartInstance.destroy();
+
+            // Stitch historical and future arrays together for continuous lines
+            const allLabels = [...fd.historical_dates, ...fd.future_dates];
+            const histData = [...fd.historical_prices, ...Array(fd.future_dates.length).fill(null)];
+            
+            // Pad future data with nulls at the start so they align properly
+            const padArray = Array(fd.historical_dates.length).fill(null);
+            
+            // Connect the last historical point to the first future point seamlessly
+            const lastHistPrice = fd.historical_prices[fd.historical_prices.length - 1];
+            padArray[padArray.length - 1] = lastHistPrice;
+
+            const futureExpected = [...padArray.slice(0, -1), lastHistPrice, ...fd.expected_path];
+            const futureUpper = [...padArray.slice(0, -1), lastHistPrice, ...fd.upper_bound];
+            const futureLower = [...padArray.slice(0, -1), lastHistPrice, ...fd.lower_bound];
+
+            forecastChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: allLabels,
+                    datasets: [
+                        { label: 'Historical Price', data: histData, borderColor: '#3a4049', tension: 0.1, pointRadius: 0, borderWidth: 1.5, fill: false },
+                        { label: '1-Year Forecast Drift', data: futureExpected, borderColor: '#5a81fa', tension: 0.1, pointRadius: 0, borderWidth: 2.5, fill: false },
+                        { label: 'Upper Bound (+95%)', data: futureUpper, borderColor: 'rgba(90, 129, 250, 0)', backgroundColor: 'rgba(90, 129, 250, 0.1)', fill: '+1', tension: 0.1, pointRadius: 0, borderWidth: 0 },
+                        { label: 'Lower Bound (-95%)', data: futureLower, borderColor: 'rgba(90, 129, 250, 0)', fill: false, tension: 0.1, pointRadius: 0, borderWidth: 0 }
+                    ]
+                },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#788293', font: { family: 'Poppins' } } } },
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { labels: { color: '#788293', font: { family: 'Poppins' }, filter: item => item.text !== 'Upper Bound (+95%)' && item.text !== 'Lower Bound (-95%)' } } },
                     scales: {
                         x: { display: false },
                         y: { ticks: { color: '#788293' }, grid: { color: 'rgba(0,0,0,0.03)' } }
                     },
-                    animation: { duration: 1500, easing: 'easeOutQuart' }
+                    animation: { duration: 2000, easing: 'easeOutQuart' }
                 }
             });
         }
 
         function copyTelemetryOutput() {
             if (!latestData) return alert("Run analysis first.");
-            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker} (₹${latestData.live_price})\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%\nAltman Z: ${latestData.fundamentals?.altman_z?.score || 'N/A'} (${latestData.fundamentals?.altman_z?.zone || 'N/A'})\nDuPont ROE: ${latestData.fundamentals?.dupont?.roe || 'N/A'}%\nEVA: ₹${latestData.fundamentals?.eva?.eva_cr || 'N/A'} Cr (${latestData.fundamentals?.eva?.status || 'N/A'})`;
+            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker} (₹${latestData.live_price})\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%\nAltman Z: ${latestData.fundamentals?.altman_z?.score || 'N/A'}\nEVA: ₹${latestData.fundamentals?.eva?.eva_cr || 'N/A'} Cr`;
             navigator.clipboard.writeText(txt);
             const btn = document.getElementById('copy-btn-text');
             btn.innerText = "Copied!";
