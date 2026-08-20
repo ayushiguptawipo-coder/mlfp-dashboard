@@ -152,7 +152,6 @@
                         <div>
                             <span class="text-xs uppercase tracking-widest text-muted font-semibold">Target Asset</span>
                             <h2 id="disp-ticker" class="text-4xl font-extrabold text-dark mt-1">---</h2>
-                            <!-- Live LTP & Daily Rupee Change Fixed -->
                             <div class="flex items-baseline gap-2 mt-1">
                                 <span id="disp-live-price" class="text-2xl font-bold text-accent">₹---</span>
                                 <span id="disp-live-change" class="text-xs font-semibold text-muted">(--)</span>
@@ -199,6 +198,103 @@
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative Out-of-Sample P&L</h3>
                 <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
+
+            <!-- NEW: INSTITUTIONAL FUNDAMENTAL HEALTH PANEL -->
+            <div class="neo-flat p-8 space-y-6">
+                <div class="flex justify-between items-center border-b border-gray-300 pb-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-dark">Institutional Fundamental Analysis</h3>
+                        <p class="text-xs text-muted">Long-Term Solvency, ROE Mechanics & True Economic Value Added</p>
+                    </div>
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Audited Fundamentals</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- 1. Altman Z-Score Card -->
+                    <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-muted">Altman Z-Score</span>
+                                <div class="group relative inline-block cursor-help">
+                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
+                                        <strong class="text-dark">Bankruptcy Risk Gauge:</strong> Predicts solvency over 2 years. <br><span class="text-green-600 font-bold">>2.99: Safe Zone</span><br><span class="text-yellow-600 font-bold">1.8-2.99: Grey Zone</span><br><span class="text-red-500 font-bold"><1.81: Distress Zone</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span id="fund-z-score" class="text-3xl font-extrabold text-dark">0.00</span>
+                                <span id="fund-z-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat text-emerald-600">Safe Zone</span>
+                            </div>
+                            <p id="fund-z-desc" class="text-xs text-muted mt-3 leading-relaxed">Pristine balance sheet with negligible bankruptcy risk.</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-gray-300 text-[11px] text-muted flex justify-between">
+                            <span>Solvency Health:</span>
+                            <span id="fund-z-verdict" class="font-semibold text-dark">Strong Buffer</span>
+                        </div>
+                    </div>
+
+                    <!-- 2. DuPont Analysis Card -->
+                    <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-muted">DuPont ROE Engine</span>
+                                <div class="group relative inline-block cursor-help">
+                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
+                                        <strong class="text-dark">ROE Decomposition:</strong> Breaks Return on Equity into 3 components: Profit Margin (Power) × Asset Turnover (Speed) × Financial Leverage (Debt).
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span id="fund-dupont-roe" class="text-3xl font-extrabold text-accent">0.0%</span>
+                                <span class="text-xs font-semibold text-muted">ROE</span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 mt-3 text-center">
+                                <div class="neo-flat p-2 rounded-xl">
+                                    <span class="text-[10px] text-muted block">Margin</span>
+                                    <span id="fund-dupont-margin" class="text-xs font-bold text-dark">0%</span>
+                                </div>
+                                <div class="neo-flat p-2 rounded-xl">
+                                    <span class="text-[10px] text-muted block">Turnover</span>
+                                    <span id="fund-dupont-turnover" class="text-xs font-bold text-dark">0x</span>
+                                </div>
+                                <div class="neo-flat p-2 rounded-xl">
+                                    <span class="text-[10px] text-muted block">Leverage</span>
+                                    <span id="fund-dupont-leverage" class="text-xs font-bold text-dark">0x</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="fund-dupont-verdict" class="text-[11px] text-muted mt-3 italic">ROE Driver: Healthy operating efficiency & low debt.</p>
+                    </div>
+
+                    <!-- 3. Economic Value Added (EVA) Card -->
+                    <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-muted">Economic Value Added</span>
+                                <div class="group relative inline-block cursor-help">
+                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
+                                        <strong class="text-dark">True Economic Profit:</strong> Net profit after paying all operational expenses and deducting the full cost of capital (WACC). Positive means real wealth creation.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span id="fund-eva-score" class="text-3xl font-extrabold text-dark">₹0 Cr</span>
+                                <span id="fund-eva-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat text-emerald-600">Value Creator</span>
+                            </div>
+                            <div class="mt-3 space-y-1 text-xs">
+                                <div class="flex justify-between text-muted"><span>NOPAT:</span><span id="fund-eva-nopat" class="font-bold text-dark">₹0 Cr</span></div>
+                                <div class="flex justify-between text-muted"><span>Cost of Capital (WACC):</span><span id="fund-eva-wacc" class="font-bold text-dark">0.0%</span></div>
+                            </div>
+                        </div>
+                        <p id="fund-eva-verdict" class="text-[11px] text-muted mt-3 leading-tight">Generates wealth above investor hurdle rates.</p>
+                    </div>
+
+                </div>
+            </div>
             
             <!-- Diagnostics -->
             <div class="neo-flat p-6 grid grid-cols-2 gap-4 text-center text-sm relative">
@@ -223,7 +319,6 @@
         const hr = new Date().getHours();
         document.getElementById('human-greeting').innerText = (hr < 12) ? "Good morning." : (hr < 18) ? "Good afternoon." : "Good evening.";
 
-        // 1. Fixed formatting inside window.onload (₹ instead of %)
         window.onload = async () => {
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/scanner`);
@@ -234,8 +329,8 @@
                 data.scanner.forEach((s, idx) => {
                     const dotClass = `dot-${s.status}`;
                     const delay = `delay-${(idx % 4) + 1}`;
-                    const changeSign = s.change_pct >= 0 ? `+₹${s.change_pct}` : `-₹${Math.abs(s.change_pct)}`;
-                    const changeColor = s.change_pct >= 0 ? 'text-emerald-600' : 'text-rose-500';
+                    const changeSign = s.change_val >= 0 ? `+₹${s.change_val}` : `-₹${Math.abs(s.change_val)}`;
+                    const changeColor = s.change_val >= 0 ? 'text-emerald-600' : 'text-rose-500';
                     
                     grid.innerHTML += `
                         <button onclick="selectTicker('${s.ticker}')" id="btn-${s.ticker}" class="neo-btn p-3 flex flex-col items-center justify-center fade-in-up ${delay}">
@@ -309,8 +404,8 @@
             const loadTexts = [
                 `Connecting to Upstox for ${activeTicker}...`, 
                 "Fetching real-time market quotes...",
-                "Constructing OHLC candlestick matrix...",
-                "Running Walk-Forward ML validation...",
+                "Running Altman Z-Score & DuPont Solvency Engines...",
+                "Computing Economic Value Added (EVA & WACC)...",
                 "Deploying LightGBM & CatBoost Classifiers...",
                 "Querying Gemini AI for Catalyst Sentiment..."
             ];
@@ -366,11 +461,10 @@
                         document.getElementById('disp-ticker').innerText = data.ticker;
                         document.getElementById('disp-live-price').innerText = `₹${data.live_price}`;
                         
-                        // 2. Fixed formatting inside executeAnalysis (₹ instead of %)
-                        const changeText = data.day_change_pct >= 0 ? `+₹${data.day_change_pct} Today` : `-₹${Math.abs(data.day_change_pct)} Today`;
+                        const changeText = data.day_change_val >= 0 ? `+₹${data.day_change_val} Today` : `-₹${Math.abs(data.day_change_val)} Today`;
                         const changeEl = document.getElementById('disp-live-change');
                         changeEl.innerText = `(${changeText})`;
-                        changeEl.className = data.day_change_pct >= 0 ? "text-xs font-semibold text-emerald-600" : "text-xs font-semibold text-rose-500";
+                        changeEl.className = data.day_change_val >= 0 ? "text-xs font-semibold text-emerald-600" : "text-xs font-semibold text-rose-500";
 
                         document.getElementById('disp-model').innerText = data.best_model;
                         document.getElementById('disp-prob').innerText = `${data.quant_probability}%`;
@@ -391,6 +485,35 @@
                         document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
                         document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
                         document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
+
+                        // Populate Institutional Fundamental Metrics
+                        if (data.fundamentals) {
+                            const f = data.fundamentals;
+                            
+                            // Altman Z
+                            document.getElementById('fund-z-score').innerText = f.altman_z.score;
+                            const zBadge = document.getElementById('fund-z-badge');
+                            zBadge.innerText = f.altman_z.zone;
+                            zBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.altman_z.status === 'green' ? 'text-emerald-600' : (f.altman_z.status === 'yellow' ? 'text-amber-600' : 'text-rose-500')}`;
+                            document.getElementById('fund-z-desc').innerText = f.altman_z.desc;
+                            document.getElementById('fund-z-verdict').innerText = f.altman_z.zone === "Safe Zone" ? "Strong Solvency" : (f.altman_z.zone === "Grey Zone" ? "Moderate Solvency" : "Distressed");
+
+                            // DuPont
+                            document.getElementById('fund-dupont-roe').innerText = `${f.dupont.roe}%`;
+                            document.getElementById('fund-dupont-margin').innerText = `${f.dupont.profit_margin}%`;
+                            document.getElementById('fund-dupont-turnover').innerText = `${f.dupont.asset_turnover}x`;
+                            document.getElementById('fund-dupont-leverage').innerText = `${f.dupont.financial_leverage}x`;
+                            document.getElementById('fund-dupont-verdict').innerText = f.dupont.verdict;
+
+                            // EVA
+                            document.getElementById('fund-eva-score').innerText = `₹${f.eva.eva_cr} Cr`;
+                            const evaBadge = document.getElementById('fund-eva-badge');
+                            evaBadge.innerText = f.eva.status;
+                            evaBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.eva.status === 'Value Creator' ? 'text-emerald-600' : 'text-rose-500'}`;
+                            document.getElementById('fund-eva-nopat').innerText = `₹${f.eva.nopat_cr} Cr`;
+                            document.getElementById('fund-eva-wacc').innerText = `${f.eva.wacc_pct}%`;
+                            document.getElementById('fund-eva-verdict').innerText = f.eva.verdict;
+                        }
 
                         renderCandleChart(data.candles);
                         renderSmoothPnlChart(data.chart_data);
@@ -486,7 +609,7 @@
 
         function copyTelemetryOutput() {
             if (!latestData) return alert("Run analysis first.");
-            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker} (₹${latestData.live_price})\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%`;
+            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker} (₹${latestData.live_price})\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%\nAltman Z: ${latestData.fundamentals?.altman_z?.score || 'N/A'} (${latestData.fundamentals?.altman_z?.zone || 'N/A'})\nDuPont ROE: ${latestData.fundamentals?.dupont?.roe || 'N/A'}%\nEVA: ₹${latestData.fundamentals?.eva?.eva_cr || 'N/A'} Cr (${latestData.fundamentals?.eva?.status || 'N/A'})`;
             navigator.clipboard.writeText(txt);
             const btn = document.getElementById('copy-btn-text');
             btn.innerText = "Copied!";
