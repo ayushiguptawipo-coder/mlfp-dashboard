@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Quant Interface</title>
+    <title>AI Quant Interface Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- TradingView Lightweight Charts Library -->
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         :root {
             --bg: #e6e9ef; --text-dark: #3a4049; --text-muted: #788293;
@@ -42,7 +44,6 @@
         .progress-bar-container { width: 100%; height: 6px; border-radius: 10px; overflow: hidden; margin-top: 1.5rem; }
         .progress-bar { height: 100%; width: 0%; background: var(--accent); border-radius: 10px; transition: width 0.3s ease; }
         
-        /* Universal Search Bar Scrollbar styling */
         #search-dropdown::-webkit-scrollbar { width: 6px; }
         #search-dropdown::-webkit-scrollbar-thumb { background: var(--shadow-dark); border-radius: 3px; }
     </style>
@@ -65,7 +66,7 @@
             </button>
         </header>
 
-        <!-- NEW: UNIVERSAL SEARCH BAR -->
+        <!-- Search Bar -->
         <div class="fade-in-up w-full relative z-50">
             <div class="flex items-center mb-2">
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Universal Market Scanner</h3>
@@ -75,20 +76,19 @@
                     <svg class="w-5 h-5 text-muted mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     <input type="text" id="search-input" class="w-full bg-transparent outline-none text-dark font-medium placeholder-muted" placeholder="Search any NSE/BSE stock (e.g. TATAMOTORS, ZOMATO)..." autocomplete="off" oninput="debounceSearch(this.value)">
                 </div>
-                
-                <!-- Autocomplete Dropdown -->
-                <div id="search-dropdown" class="absolute w-full mt-3 neo-flat hidden max-h-64 overflow-y-auto overflow-x-hidden border border-[#ffffff33]">
-                    <!-- Results populated via JS -->
-                </div>
+                <div id="search-dropdown" class="absolute w-full mt-3 neo-flat hidden max-h-64 overflow-y-auto overflow-x-hidden border border-[#ffffff33]"></div>
             </div>
         </div>
 
-        <!-- Default Heatmap Watchlist -->
+        <!-- Real-Time Watchlist -->
         <div class="fade-in-up delay-1">
-            <h3 class="text-xs uppercase tracking-widest text-muted font-semibold mb-4">Default Heatmap Watchlist</h3>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xs uppercase tracking-widest text-muted font-semibold">Live Watchlist & LTP</h3>
+                <span class="text-[11px] text-muted flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Live Upstox Quotes</span>
+            </div>
             <div id="scanner-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div class="neo-pressed h-16 flex items-center justify-center text-sm text-muted animate-pulse col-span-full">
-                    Scanning market regimes...
+                    Connecting to live market stream...
                 </div>
             </div>
         </div>
@@ -131,7 +131,9 @@
         <!-- Dashboard View -->
         <div id="dashboard-view" class="hidden space-y-8 fade-in-up">
             
+            <!-- Top Row: AI Executive Brief & Asset Header Card -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- AI Brief -->
                 <div class="neo-flat p-8 flex flex-col justify-between">
                     <div>
                         <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-4">AI Executive Brief</h3>
@@ -145,19 +147,30 @@
                     </div>
                 </div>
 
-                <div class="neo-flat p-8 flex flex-col justify-center">
-                    <div class="text-center">
-                        <h2 id="disp-ticker" class="text-5xl font-bold mb-4">---</h2>
-                        <span id="disp-signal" class="inline-block px-6 py-2 rounded-full font-bold tracking-widest text-sm neo-pressed">WAITING</span>
+                <!-- Signal & Real-Time Price Card -->
+                <div class="neo-flat p-8 flex flex-col justify-between">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="text-xs uppercase tracking-widest text-muted font-semibold">Target Asset</span>
+                            <h2 id="disp-ticker" class="text-4xl font-extrabold text-dark mt-1">---</h2>
+                            <!-- Live LTP & Daily Change -->
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="disp-live-price" class="text-2xl font-bold text-accent">₹---</span>
+                                <span id="disp-live-change" class="text-xs font-semibold text-muted">(--)</span>
+                            </div>
+                        </div>
+                        <span id="disp-signal" class="inline-block px-5 py-2 rounded-full font-bold tracking-widest text-xs neo-pressed">WAITING</span>
                     </div>
-                    <div class="mt-8 space-y-3 text-sm">
-                        <div class="flex justify-between border-b border-gray-300 pb-2"><span class="text-muted">Winning Algorithm</span><span id="disp-model" class="font-semibold">---</span></div>
-                        <div class="flex justify-between border-b border-gray-300 pb-2"><span class="text-muted">Bullish Probability</span><span id="disp-prob" class="font-bold text-accent">---%</span></div>
-                        <div class="flex justify-between"><span class="text-muted">K-Means Regime</span><span id="disp-regime" class="font-semibold">---</span></div>
+
+                    <div class="mt-6 space-y-2 text-sm border-t border-gray-300 pt-4">
+                        <div class="flex justify-between"><span class="text-muted">Winning Algorithm:</span><span id="disp-model" class="font-semibold">---</span></div>
+                        <div class="flex justify-between"><span class="text-muted">Bullish Conviction:</span><span id="disp-prob" class="font-bold text-accent">---%</span></div>
+                        <div class="flex justify-between"><span class="text-muted">K-Means Regime:</span><span id="disp-regime" class="font-semibold">---</span></div>
                     </div>
                 </div>
             </div>
 
+            <!-- Strategy Return Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="neo-flat p-6 text-center">
                     <span class="text-xs text-muted uppercase tracking-wider font-semibold">Benchmark Hold</span>
@@ -173,11 +186,22 @@
                 </div>
             </div>
 
+            <!-- Candlestick Chart Card -->
             <div class="neo-flat p-6">
-                <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative P&L Projection</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Asset Price Action (Candlesticks)</h3>
+                    <span class="text-xs text-muted">Daily OHLC Bars</span>
+                </div>
+                <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
+            </div>
+
+            <!-- Cumulative P&L Projection Chart -->
+            <div class="neo-flat p-6">
+                <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative Out-of-Sample P&L</h3>
                 <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
             
+            <!-- Diagnostics -->
             <div class="neo-flat p-6 grid grid-cols-2 gap-4 text-center text-sm relative">
                 <div><p class="text-muted mb-1">Unfiltered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-unfilt-trades">0</span> / <span id="disp-diag-unfilt-frict" class="text-red-500">0%</span></p></div>
                 <div><p class="text-muted mb-1">Filtered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-filt-trades">0</span> / <span id="disp-diag-filt-frict" class="text-green-600">0%</span></p></div>
@@ -191,14 +215,16 @@
         let activeTicker = null;
         let activeInstrumentKey = null;
         let latestData = null;
-        let chartInstance = null;
+        let pnlChartInstance = null;
+        let candleChartInstance = null;
+        let candleSeries = null;
         let loaderInterval = null;
         let searchTimeout = null;
 
         const hr = new Date().getHours();
         document.getElementById('human-greeting').innerText = (hr < 12) ? "Good morning." : (hr < 18) ? "Good afternoon." : "Good evening.";
 
-        // Initial Load: Heatmap Watchlist
+        // Initial Load: Live Watchlist
         window.onload = async () => {
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/scanner`);
@@ -209,29 +235,31 @@
                 data.scanner.forEach((s, idx) => {
                     const dotClass = `dot-${s.status}`;
                     const delay = `delay-${(idx % 4) + 1}`;
+                    const changeSign = s.change_pct >= 0 ? `+${s.change_pct}%` : `${s.change_pct}%`;
+                    const changeColor = s.change_pct >= 0 ? 'text-emerald-600' : 'text-rose-500';
+                    
                     grid.innerHTML += `
                         <button onclick="selectTicker('${s.ticker}')" id="btn-${s.ticker}" class="neo-btn p-3 flex flex-col items-center justify-center fade-in-up ${delay}">
                             <div class="flex items-center gap-2 mb-1"><span class="dot ${dotClass}"></span><span class="font-bold text-sm">${s.ticker}</span></div>
-                            <span class="text-xs text-muted">₹${s.price}</span>
+                            <span class="text-xs font-semibold text-dark">₹${s.price}</span>
+                            <span class="text-[10px] ${changeColor} font-medium">${changeSign}</span>
                         </button>
                     `;
                 });
             } catch (err) {
-                document.getElementById('scanner-grid').innerHTML = `<p class="text-red-500 text-sm">Scanner offline.</p>`;
+                document.getElementById('scanner-grid').innerHTML = `<p class="text-red-500 text-sm">Live market stream offline.</p>`;
             }
         };
 
-        // Watchlist Selection
         function selectTicker(ticker) {
             activeTicker = ticker;
-            activeInstrumentKey = null; // Forces backend to use dictionary
+            activeInstrumentKey = null;
             document.getElementById('search-input').value = '';
             document.querySelectorAll('#scanner-grid button').forEach(b => b.classList.remove('active-ticker'));
             const btn = document.getElementById(`btn-${ticker}`);
             if(btn) btn.classList.add('active-ticker');
         }
 
-        // --- NEW: UNIVERSAL SEARCH LOGIC ---
         async function debounceSearch(query) {
             clearTimeout(searchTimeout);
             const dropdown = document.getElementById('search-dropdown');
@@ -241,7 +269,7 @@
                 return;
             }
             
-            dropdown.innerHTML = `<div class="p-5 text-sm text-muted animate-pulse">Scanning Upstox Database...</div>`;
+            dropdown.innerHTML = `<div class="p-5 text-sm text-muted animate-pulse">Searching Upstox Database...</div>`;
             dropdown.classList.remove('hidden');
 
             searchTimeout = setTimeout(async () => {
@@ -267,28 +295,24 @@
                 } catch(e) {
                     dropdown.innerHTML = `<div class="p-5 text-sm text-red-500">Search connection failed.</div>`;
                 }
-            }, 400); // 400ms debounce typing
+            }, 400);
         }
 
         function selectFromSearch(ticker, instrumentKey) {
             activeTicker = ticker;
             activeInstrumentKey = instrumentKey;
-            
             document.getElementById('search-input').value = ticker;
             document.getElementById('search-dropdown').classList.add('hidden');
-            
-            // Clear heatmap selections
             document.querySelectorAll('#scanner-grid button').forEach(b => b.classList.remove('active-ticker'));
         }
 
-        // Loading Sequence
         function startLoadingSequence() {
             const loadTexts = [
-                `Locating ${activeTicker} via Upstox API...`, 
-                "Fetching 3 years of market data...",
+                `Connecting to Upstox for ${activeTicker}...`, 
+                "Fetching real-time market quotes...",
+                "Constructing OHLC candlestick matrix...",
                 "Running Walk-Forward ML validation...",
                 "Deploying LightGBM & CatBoost Classifiers...",
-                "Checking 200-Day Macro Trend Alignment...",
                 "Querying Gemini AI for Catalyst Sentiment..."
             ];
             
@@ -310,9 +334,8 @@
             }, 900);
         }
 
-        // Analysis Execution
         async function executeAnalysis() {
-            if (!activeTicker) return alert("Please search for a stock or select one from the heatmap first.");
+            if (!activeTicker) return alert("Please search for a stock or select one from the watchlist first.");
             
             document.getElementById('dashboard-view').classList.add('hidden');
             document.getElementById('loading-view').classList.remove('hidden');
@@ -321,13 +344,10 @@
             
             const friction = parseFloat(document.getElementById('slider-friction').value) / 100;
             const neutral = parseFloat(document.getElementById('slider-neutral').value) / 100;
-            
-            // Dynamically append the instrument key if it was selected from the universal search
             const endpointUrl = `${RENDER_BACKEND_URL}/api/analyze/${activeTicker}?friction=${friction}&neutral_band=${neutral}${activeInstrumentKey ? '&instrument_key=' + encodeURIComponent(activeInstrumentKey) : ''}`;
 
             try {
                 const res = await fetch(endpointUrl);
-                
                 if (!res.ok) {
                     const errData = await res.json();
                     throw new Error(errData.detail || "API Connection Failed.");
@@ -341,7 +361,14 @@
 
                 setTimeout(() => {
                     try {
+                        // Populate Asset & Live Price Card
                         document.getElementById('disp-ticker').innerText = data.ticker;
+                        document.getElementById('disp-live-price').innerText = `₹${data.live_price}`;
+                        const changeText = data.day_change_pct >= 0 ? `+${data.day_change_pct}% Today` : `${data.day_change_pct}% Today`;
+                        const changeEl = document.getElementById('disp-live-change');
+                        changeEl.innerText = `(${changeText})`;
+                        changeEl.className = data.day_change_pct >= 0 ? "text-xs font-semibold text-emerald-600" : "text-xs font-semibold text-rose-500";
+
                         document.getElementById('disp-model').innerText = data.best_model;
                         document.getElementById('disp-prob').innerText = `${data.quant_probability}%`;
                         document.getElementById('disp-regime').innerText = data.current_regime;
@@ -362,7 +389,9 @@
                         document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
                         document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
 
-                        renderSmoothChart(data.chart_data);
+                        // Render Both Charts
+                        renderCandleChart(data.candles);
+                        renderSmoothPnlChart(data.chart_data);
 
                         document.getElementById('loading-view').classList.add('hidden');
                         document.getElementById('dashboard-view').classList.remove('hidden');
@@ -378,9 +407,48 @@
             }
         }
 
-        function renderSmoothChart(cd) {
+        // --- TRADINGVIEW LIGHTWEIGHT CANDLESTICK CHART ---
+        function renderCandleChart(candleData) {
+            const container = document.getElementById('candleChartContainer');
+            container.innerHTML = ''; // Clear prior instance
+            
+            candleChartInstance = LightweightCharts.createChart(container, {
+                width: container.clientWidth,
+                height: 300,
+                layout: {
+                    background: { type: 'solid', color: 'transparent' },
+                    textColor: '#788293',
+                    fontFamily: 'Poppins'
+                },
+                grid: {
+                    vertLines: { color: 'rgba(0, 0, 0, 0.04)' },
+                    horzLines: { color: 'rgba(0, 0, 0, 0.04)' }
+                },
+                crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+                rightPriceScale: { borderColor: 'rgba(0, 0, 0, 0.1)' },
+                timeScale: { borderColor: 'rgba(0, 0, 0, 0.1)' }
+            });
+
+            candleSeries = candleChartInstance.addCandlestickSeries({
+                upColor: '#22c55e',
+                downColor: '#ef4444',
+                borderVisible: false,
+                wickUpColor: '#22c55e',
+                wickDownColor: '#ef4444'
+            });
+
+            candleSeries.setData(candleData);
+            candleChartInstance.timeScale().fitContent();
+
+            // Auto-resize on window adjustment
+            window.addEventListener('resize', () => {
+                if (candleChartInstance) candleChartInstance.applyOptions({ width: container.clientWidth });
+            });
+        }
+
+        function renderSmoothPnlChart(cd) {
             const ctx = document.getElementById('pnlChart').getContext('2d');
-            if (chartInstance) chartInstance.destroy();
+            if (pnlChartInstance) pnlChartInstance.destroy();
 
             const gradBlue = ctx.createLinearGradient(0, 0, 0, 300);
             gradBlue.addColorStop(0, 'rgba(90, 129, 250, 0.2)');
@@ -390,7 +458,7 @@
             gradGreen.addColorStop(0, 'rgba(56, 161, 105, 0.2)');
             gradGreen.addColorStop(1, 'rgba(56, 161, 105, 0)');
 
-            chartInstance = new Chart(ctx, {
+            pnlChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: cd.labels,
@@ -414,7 +482,7 @@
 
         function copyTelemetryOutput() {
             if (!latestData) return alert("Run analysis first.");
-            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker}\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%`;
+            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker} (₹${latestData.live_price})\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%`;
             navigator.clipboard.writeText(txt);
             const btn = document.getElementById('copy-btn-text');
             btn.innerText = "Copied!";
