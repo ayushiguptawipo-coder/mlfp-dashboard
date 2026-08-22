@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+    <!-- PDF Generation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --bg: #e6e9ef; --text-dark: #3a4049; --text-muted: #788293;
@@ -59,10 +61,16 @@
             <div>
                 <h1 id="human-greeting" class="text-4xl md:text-5xl font-bold tracking-tight">Good morning.</h1>
             </div>
-            <button onclick="copyTelemetryOutput()" class="neo-btn px-5 py-2 text-sm text-muted flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
-                <span id="copy-btn-text">Copy Telemetry</span>
-            </button>
+            <div class="flex items-center gap-3">
+                <button onclick="exportPdfTearSheet()" class="neo-btn px-5 py-2 text-sm text-accent font-semibold flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span id="pdf-btn-text">Download PDF Report</span>
+                </button>
+                <button onclick="copyTelemetryOutput()" class="neo-btn px-5 py-2 text-sm text-muted flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    <span id="copy-btn-text">Copy Telemetry</span>
+                </button>
+            </div>
         </header>
 
         <!-- Search Bar -->
@@ -127,7 +135,7 @@
             </div>
         </div>
 
-        <!-- Dashboard View -->
+        <!-- Dashboard View (PDF Target Container) -->
         <div id="dashboard-view" class="hidden space-y-8 fade-in-up">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -192,7 +200,7 @@
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
             </div>
 
-            <!-- NEW: 1-Year Algorithmic Projection Chart -->
+            <!-- 1-Year Algorithmic Projection Chart -->
             <div id="forecast-container" class="neo-flat p-6 hidden">
                 <div class="flex justify-between items-center mb-6">
                     <div>
@@ -210,16 +218,17 @@
                 <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
 
-            <!-- INSTITUTIONAL FUNDAMENTAL HEALTH PANEL -->
+            <!-- INSTITUTIONAL FUNDAMENTAL & FORENSIC ACCOUNTING PANEL -->
             <div class="neo-flat p-8 space-y-6">
                 <div class="flex justify-between items-center border-b border-gray-300 pb-4">
                     <div>
-                        <h3 class="text-lg font-bold text-dark">Institutional Fundamental Analysis</h3>
-                        <p class="text-xs text-muted">Long-Term Solvency, ROE Mechanics & True Economic Value Added</p>
+                        <h3 class="text-lg font-bold text-dark">Institutional Fundamentals & Forensic Audit</h3>
+                        <p class="text-xs text-muted">Solvency, ROE Decomposition, Economic Profit & Earnings Manipulation Checks</p>
                     </div>
-                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Audited Fundamentals</span>
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Audited Data Feed</span>
                 </div>
 
+                <!-- Top Row: Altman Z, DuPont, EVA -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
                     <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
@@ -261,18 +270,9 @@
                                 <span class="text-xs font-semibold text-muted">ROE</span>
                             </div>
                             <div class="grid grid-cols-3 gap-2 mt-3 text-center">
-                                <div class="neo-flat p-2 rounded-xl">
-                                    <span class="text-[10px] text-muted block">Margin</span>
-                                    <span id="fund-dupont-margin" class="text-xs font-bold text-dark">0%</span>
-                                </div>
-                                <div class="neo-flat p-2 rounded-xl">
-                                    <span class="text-[10px] text-muted block">Turnover</span>
-                                    <span id="fund-dupont-turnover" class="text-xs font-bold text-dark">0x</span>
-                                </div>
-                                <div class="neo-flat p-2 rounded-xl">
-                                    <span class="text-[10px] text-muted block">Leverage</span>
-                                    <span id="fund-dupont-leverage" class="text-xs font-bold text-dark">0x</span>
-                                </div>
+                                <div class="neo-flat p-2 rounded-xl"><span class="text-[10px] text-muted block">Margin</span><span id="fund-dupont-margin" class="text-xs font-bold text-dark">0%</span></div>
+                                <div class="neo-flat p-2 rounded-xl"><span class="text-[10px] text-muted block">Turnover</span><span id="fund-dupont-turnover" class="text-xs font-bold text-dark">0x</span></div>
+                                <div class="neo-flat p-2 rounded-xl"><span class="text-[10px] text-muted block">Leverage</span><span id="fund-dupont-leverage" class="text-xs font-bold text-dark">0x</span></div>
                             </div>
                         </div>
                         <p id="fund-dupont-verdict" class="text-[11px] text-muted mt-3 italic">...</p>
@@ -302,6 +302,52 @@
                     </div>
 
                 </div>
+
+                <!-- Bottom Row: Piotroski F-Score & Beneish M-Score -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                    
+                    <!-- Piotroski F-Score -->
+                    <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-muted">Piotroski F-Score (Health Metric)</span>
+                                <div class="group relative inline-block cursor-help">
+                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
+                                        <strong class="text-dark">9-Point Health Audit:</strong> Tests Profitability, Balance Sheet Liquidity, and Operating Efficiency. 8-9 is institutional quality.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span id="fund-f-score" class="text-3xl font-extrabold text-dark">8 / 9</span>
+                                <span id="fund-f-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat text-emerald-600">Strong Health</span>
+                            </div>
+                            <p id="fund-f-desc" class="text-xs text-muted mt-3 leading-relaxed">Score 8/9 reflects strong balance sheet liquidity and operational momentum.</p>
+                        </div>
+                    </div>
+
+                    <!-- Beneish M-Score -->
+                    <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-bold uppercase tracking-wider text-muted">Beneish M-Score (Forensic Detector)</span>
+                                <div class="group relative inline-block cursor-help">
+                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
+                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
+                                        <strong class="text-dark">Manipulation Test:</strong> Mathematical model assessing whether revenue or earnings are artificially inflated. Under -1.78 = Clean.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-baseline gap-2">
+                                <span id="fund-m-score" class="text-3xl font-extrabold text-dark">-2.45</span>
+                                <span id="fund-m-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat text-emerald-600">Unlikely Manipulator</span>
+                            </div>
+                            <p id="fund-m-desc" class="text-xs text-muted mt-3 leading-relaxed">Financial statements show genuine revenue and balance sheet integrity.</p>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
             
             <!-- Diagnostics -->
@@ -395,9 +441,9 @@
         function startLoadingSequence() {
             const loadTexts = [
                 `Connecting to Upstox for ${activeTicker}...`, 
+                "Running Forensic Accounting (Piotroski & Beneish)...",
                 "Computing 1-Year Time-Series Probability Cone...",
                 "Running Altman Z-Score & DuPont Solvency Engines...",
-                "Computing Economic Value Added (EVA)...",
                 "Deploying LightGBM Classifiers...",
                 "Querying Gemini AI for Catalyst Sentiment..."
             ];
@@ -470,6 +516,7 @@
 
                         if (data.fundamentals) {
                             const f = data.fundamentals;
+                            // Altman Z
                             document.getElementById('fund-z-score').innerText = f.altman_z.score;
                             const zBadge = document.getElementById('fund-z-badge');
                             zBadge.innerText = f.altman_z.zone;
@@ -477,12 +524,14 @@
                             document.getElementById('fund-z-desc').innerText = f.altman_z.desc;
                             document.getElementById('fund-z-verdict').innerText = f.altman_z.zone === "Safe Zone" ? "Strong Solvency" : (f.altman_z.zone === "Grey Zone" ? "Moderate Solvency" : "Distressed");
 
+                            // DuPont
                             document.getElementById('fund-dupont-roe').innerText = `${f.dupont.roe}%`;
                             document.getElementById('fund-dupont-margin').innerText = `${f.dupont.profit_margin}%`;
                             document.getElementById('fund-dupont-turnover').innerText = `${f.dupont.asset_turnover}x`;
                             document.getElementById('fund-dupont-leverage').innerText = `${f.dupont.financial_leverage}x`;
                             document.getElementById('fund-dupont-verdict').innerText = f.dupont.verdict;
 
+                            // EVA
                             document.getElementById('fund-eva-score').innerText = `₹${f.eva.eva_cr} Cr`;
                             const evaBadge = document.getElementById('fund-eva-badge');
                             evaBadge.innerText = f.eva.status;
@@ -490,6 +539,21 @@
                             document.getElementById('fund-eva-nopat').innerText = `₹${f.eva.nopat_cr} Cr`;
                             document.getElementById('fund-eva-wacc').innerText = `${f.eva.wacc_pct}%`;
                             document.getElementById('fund-eva-verdict').innerText = f.eva.verdict;
+
+                            // Forensics (Piotroski & Beneish)
+                            if (f.forensics) {
+                                document.getElementById('fund-f-score').innerText = `${f.forensics.piotroski_f.score} / 9`;
+                                const fBadge = document.getElementById('fund-f-badge');
+                                fBadge.innerText = f.forensics.piotroski_f.status;
+                                fBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.piotroski_f.badge === 'green' ? 'text-emerald-600' : (f.forensics.piotroski_f.badge === 'yellow' ? 'text-amber-600' : 'text-rose-500')}`;
+                                document.getElementById('fund-f-desc').innerText = f.forensics.piotroski_f.desc;
+
+                                document.getElementById('fund-m-score').innerText = f.forensics.beneish_m.score;
+                                const mBadge = document.getElementById('fund-m-badge');
+                                mBadge.innerText = f.forensics.beneish_m.verdict;
+                                mBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.beneish_m.badge === 'green' ? 'text-emerald-600' : 'text-rose-500'}`;
+                                document.getElementById('fund-m-desc').innerText = f.forensics.beneish_m.desc;
+                            }
                         }
 
                         renderCandleChart(data.candles);
@@ -547,14 +611,10 @@
             const ctx = document.getElementById('forecastChart').getContext('2d');
             if (forecastChartInstance) forecastChartInstance.destroy();
 
-            // Stitch historical and future arrays together for continuous lines
             const allLabels = [...fd.historical_dates, ...fd.future_dates];
             const histData = [...fd.historical_prices, ...Array(fd.future_dates.length).fill(null)];
             
-            // Pad future data with nulls at the start so they align properly
             const padArray = Array(fd.historical_dates.length).fill(null);
-            
-            // Connect the last historical point to the first future point seamlessly
             const lastHistPrice = fd.historical_prices[fd.historical_prices.length - 1];
             padArray[padArray.length - 1] = lastHistPrice;
 
@@ -586,9 +646,33 @@
             });
         }
 
+        // --- ONE-CLICK INSTITUTIONAL PDF TEAR SHEET EXPORTER ---
+        function exportPdfTearSheet() {
+            if (!latestData) return alert("Please execute stock analysis first before downloading a report.");
+            
+            const btn = document.getElementById('pdf-btn-text');
+            btn.innerText = "Generating PDF...";
+
+            const element = document.getElementById('dashboard-view');
+            const opt = {
+                margin:       [10, 10, 10, 10],
+                filename:     `${latestData.ticker}_Institutional_Quant_Report.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                btn.innerText = "Download PDF Report";
+            }).catch(err => {
+                alert("PDF Generation error: " + err.message);
+                btn.innerText = "Download PDF Report";
+            });
+        }
+
         function copyTelemetryOutput() {
             if (!latestData) return alert("Run analysis first.");
-            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker} (₹${latestData.live_price})\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%\nAltman Z: ${latestData.fundamentals?.altman_z?.score || 'N/A'}\nEVA: ₹${latestData.fundamentals?.eva?.eva_cr || 'N/A'} Cr`;
+            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker} (₹${latestData.live_price})\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%\nAltman Z: ${latestData.fundamentals?.altman_z?.score || 'N/A'}\nPiotroski F: ${latestData.fundamentals?.forensics?.piotroski_f?.score || 'N/A'}/9\nBeneish M: ${latestData.fundamentals?.forensics?.beneish_m?.score || 'N/A'}\nEVA: ₹${latestData.fundamentals?.eva?.eva_cr || 'N/A'} Cr`;
             navigator.clipboard.writeText(txt);
             const btn = document.getElementById('copy-btn-text');
             btn.innerText = "Copied!";
