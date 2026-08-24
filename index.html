@@ -522,7 +522,13 @@
                             zBadge.innerText = f.altman_z.zone;
                             zBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.altman_z.status === 'green' ? 'text-emerald-600' : (f.altman_z.status === 'yellow' ? 'text-amber-600' : 'text-rose-500')}`;
                             document.getElementById('fund-z-desc').innerText = f.altman_z.desc;
-                            document.getElementById('fund-z-verdict').innerText = f.altman_z.zone === "Safe Zone" ? "Strong Solvency" : (f.altman_z.zone === "Grey Zone" ? "Moderate Solvency" : "Distressed");
+                            if (f.altman_z.zone.includes("Safe") || f.altman_z.zone.includes("Exempt")) {
+    document.getElementById('fund-z-verdict').innerText = "Strong Solvency";
+} else if (f.altman_z.zone.includes("Grey")) {
+    document.getElementById('fund-z-verdict').innerText = "Moderate Solvency";
+} else {
+    document.getElementById('fund-z-verdict').innerText = "Distressed";
+}
 
                             // DuPont
                             document.getElementById('fund-dupont-roe').innerText = `${f.dupont.roe}%`;
