@@ -526,6 +526,8 @@
     document.getElementById('fund-z-verdict').innerText = "Strong Solvency";
 } else if (f.altman_z.zone.includes("Grey")) {
     document.getElementById('fund-z-verdict').innerText = "Moderate Solvency";
+} else if (f.altman_z.zone.includes("Blocked")) {
+    document.getElementById('fund-z-verdict').innerText = "Data Unavailable";
 } else {
     document.getElementById('fund-z-verdict').innerText = "Distressed";
 }
