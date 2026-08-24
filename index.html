@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
-    <!-- PDF Generation Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
@@ -27,7 +26,8 @@
         .neo-btn { background: var(--bg); box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); border-radius: 16px; transition: all 0.3s ease; cursor: pointer; }
         .neo-btn:hover { transform: translateY(-2px); box-shadow: 10px 10px 20px var(--shadow-dark), -10px -10px 20px var(--shadow-light); }
         .neo-btn:active, .neo-btn.active-ticker { transform: translateY(0); box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); color: var(--accent); font-weight: 600; }
-
+        
+        input[type=number], input[type=text] { background: transparent; outline: none; }
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 10px; background: var(--bg); box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light); border-radius: 5px; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%; background: var(--bg); margin-top: -6px; cursor: pointer; box-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light); }
@@ -153,15 +153,20 @@
                     </div>
                 </div>
 
-                <!-- Signal & Real-Time Price Card -->
+                <!-- Signal & Real-Time Price Card with SECTOR INFO -->
                 <div class="neo-flat p-8 flex flex-col justify-between">
                     <div class="flex justify-between items-start">
                         <div>
                             <span class="text-xs uppercase tracking-widest text-muted font-semibold">Target Asset</span>
                             <h2 id="disp-ticker" class="text-4xl font-extrabold text-dark mt-1">---</h2>
-                            <div class="flex items-baseline gap-2 mt-1">
+                            <div class="flex items-center gap-2 mt-2">
                                 <span id="disp-live-price" class="text-2xl font-bold text-accent">₹---</span>
                                 <span id="disp-live-change" class="text-xs font-semibold text-muted">(--)</span>
+                            </div>
+                            <!-- NEW SECTOR & INDUSTRY BADGES -->
+                            <div class="flex items-center gap-2 mt-3">
+                                <span id="disp-sector" class="px-2 py-1 bg-gray-200 text-[#3a4049] text-[10px] font-bold uppercase rounded-md shadow-sm">Sector</span>
+                                <span id="disp-industry" class="px-2 py-1 bg-gray-200 text-[#788293] text-[10px] font-semibold uppercase rounded-md shadow-sm">Industry</span>
                             </div>
                         </div>
                         <span id="disp-signal" class="inline-block px-5 py-2 rounded-full font-bold tracking-widest text-xs neo-pressed">WAITING</span>
@@ -175,22 +180,6 @@
                 </div>
             </div>
 
-            <!-- Strategy Return Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="neo-flat p-6 text-center">
-                    <span class="text-xs text-muted uppercase tracking-wider font-semibold">Benchmark Hold</span>
-                    <p id="disp-ret-bh" class="text-2xl font-bold mt-1">0.00%</p>
-                </div>
-                <div class="neo-flat p-6 text-center">
-                    <span class="text-xs text-muted uppercase tracking-wider font-semibold">Naive Strategy</span>
-                    <p id="disp-ret-unfilt" class="text-2xl font-bold mt-1 text-red-500">0.00%</p>
-                </div>
-                <div class="neo-flat p-6 text-center">
-                    <span class="text-xs text-muted uppercase tracking-wider font-semibold">Regime-Filtered</span>
-                    <p id="disp-ret-filt" class="text-2xl font-bold mt-1 text-green-600">0.00%</p>
-                </div>
-            </div>
-
             <!-- Candlestick Chart Card -->
             <div class="neo-flat p-6">
                 <div class="flex justify-between items-center mb-4">
@@ -200,22 +189,69 @@
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
             </div>
 
-            <!-- 1-Year Algorithmic Projection Chart -->
-            <div id="forecast-container" class="neo-flat p-6 hidden">
-                <div class="flex justify-between items-center mb-6">
+            <!-- NEW: ACTIONABLE RISK MANAGEMENT & TRADE SETUP CARD -->
+            <div class="neo-flat p-8">
+                <div class="flex justify-between items-center border-b border-gray-300 pb-4 mb-6">
                     <div>
-                        <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">1-Year Algorithmic Projection</h3>
-                        <p class="text-[10px] text-muted mt-1">Log-Drift Extrapolation with 95% Confidence Interval</p>
+                        <h3 class="text-lg font-bold text-dark">Actionable Risk Management & Trade Setup</h3>
+                        <p class="text-xs text-muted">Dynamic Volatility-Based Position Sizing (ATR Driven)</p>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-[10px] font-bold neo-pressed text-accent">Time-Series Extrapolation</span>
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Calculator</span>
                 </div>
-                <div class="relative h-80 w-full"><canvas id="forecastChart"></canvas></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- Capital Input -->
+                    <div class="neo-pressed p-5 rounded-2xl col-span-1">
+                        <label class="block text-[11px] font-bold uppercase tracking-widest text-muted mb-2">Max Capital Risk (₹)</label>
+                        <div class="flex items-center text-xl font-bold text-dark border-b-2 border-accent pb-1">
+                            <span class="mr-1 text-muted">₹</span>
+                            <input type="number" id="risk-input" value="5000" class="w-full" oninput="calculateTradeSetup()">
+                        </div>
+                        <p class="text-[10px] text-muted mt-2">Amount you are willing to lose if Stop Loss hits.</p>
+                    </div>
+
+                    <!-- Setup Output Cards -->
+                    <div class="col-span-3 grid grid-cols-3 gap-4">
+                        <div class="neo-flat p-5 text-center flex flex-col justify-center rounded-2xl">
+                            <span class="text-[10px] uppercase font-bold text-muted mb-1">Recommended Shares</span>
+                            <span id="trade-qty" class="text-3xl font-extrabold text-accent">0</span>
+                            <span id="trade-direction" class="text-[10px] font-semibold mt-1">---</span>
+                        </div>
+                        <div class="neo-flat p-5 text-center flex flex-col justify-center rounded-2xl border-l-4 border-rose-500">
+                            <span class="text-[10px] uppercase font-bold text-muted mb-1">Dynamic Stop Loss</span>
+                            <span id="trade-sl" class="text-2xl font-bold text-dark">₹0.00</span>
+                            <span class="text-[10px] text-rose-500 mt-1">ATR Based</span>
+                        </div>
+                        <div class="neo-flat p-5 text-center flex flex-col justify-center rounded-2xl border-l-4 border-emerald-500">
+                            <span class="text-[10px] uppercase font-bold text-muted mb-1">Take Profit Target (2R)</span>
+                            <span id="trade-tp" class="text-2xl font-bold text-dark">₹0.00</span>
+                            <span class="text-[10px] text-emerald-600 mt-1">Reward Profile</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Cumulative P&L Projection Chart -->
-            <div class="neo-flat p-6">
-                <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative Out-of-Sample P&L</h3>
-                <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
+            <!-- 1-Year & Quarterly Projection Chart -->
+            <div id="forecast-container" class="neo-flat p-6 hidden">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                    <div>
+                        <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Forward Price Projection</h3>
+                        <p class="text-[10px] text-muted mt-1">Log-Drift Extrapolation with 95% Confidence Interval</p>
+                    </div>
+                    
+                    <!-- NEW QUARTERLY PROJECTION BAR -->
+                    <div class="neo-pressed px-4 py-2 mt-4 md:mt-0 flex gap-4 text-xs font-semibold">
+                        <div class="border-r border-gray-300 pr-4">
+                            <span class="text-[10px] text-muted uppercase block">Q3 Expected (3-Mo)</span>
+                            <span id="q-expected" class="text-accent font-bold text-sm">₹---</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] text-muted uppercase block">95% Risk Range</span>
+                            <span id="q-range" class="text-dark">₹--- to ₹---</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative h-80 w-full"><canvas id="forecastChart"></canvas></div>
             </div>
 
             <!-- INSTITUTIONAL FUNDAMENTAL & FORENSIC ACCOUNTING PANEL -->
@@ -225,22 +261,14 @@
                         <h3 class="text-lg font-bold text-dark">Institutional Fundamentals & Forensic Audit</h3>
                         <p class="text-xs text-muted">Solvency, ROE Decomposition, Economic Profit & Earnings Manipulation Checks</p>
                     </div>
-                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Audited Data Feed</span>
+                    <span id="fund-source-badge" class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Audited Data Feed</span>
                 </div>
 
-                <!-- Top Row: Altman Z, DuPont, EVA -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    
                     <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs font-bold uppercase tracking-wider text-muted">Altman Z-Score</span>
-                                <div class="group relative inline-block cursor-help">
-                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
-                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
-                                        <strong class="text-dark">Bankruptcy Risk Gauge:</strong> Predicts solvency over 2 years.
-                                    </div>
-                                </div>
                             </div>
                             <div class="flex items-baseline gap-2">
                                 <span id="fund-z-score" class="text-3xl font-extrabold text-dark">0.00</span>
@@ -258,12 +286,6 @@
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs font-bold uppercase tracking-wider text-muted">DuPont ROE Engine</span>
-                                <div class="group relative inline-block cursor-help">
-                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
-                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
-                                        <strong class="text-dark">ROE Decomposition:</strong> Breaks Return on Equity into Margin × Turnover × Leverage.
-                                    </div>
-                                </div>
                             </div>
                             <div class="flex items-baseline gap-2">
                                 <span id="fund-dupont-roe" class="text-3xl font-extrabold text-accent">0.0%</span>
@@ -282,12 +304,6 @@
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs font-bold uppercase tracking-wider text-muted">Economic Value Added</span>
-                                <div class="group relative inline-block cursor-help">
-                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
-                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
-                                        <strong class="text-dark">True Economic Profit:</strong> Net profit after paying all expenses and deducting the cost of capital.
-                                    </div>
-                                </div>
                             </div>
                             <div class="flex items-baseline gap-2">
                                 <span id="fund-eva-score" class="text-3xl font-extrabold text-dark">₹0 Cr</span>
@@ -300,54 +316,40 @@
                         </div>
                         <p id="fund-eva-verdict" class="text-[11px] text-muted mt-3 leading-tight">...</p>
                     </div>
-
                 </div>
 
-                <!-- Bottom Row: Piotroski F-Score & Beneish M-Score -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                    
-                    <!-- Piotroski F-Score -->
                     <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs font-bold uppercase tracking-wider text-muted">Piotroski F-Score (Health Metric)</span>
-                                <div class="group relative inline-block cursor-help">
-                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
-                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
-                                        <strong class="text-dark">9-Point Health Audit:</strong> Tests Profitability, Balance Sheet Liquidity, and Operating Efficiency. 8-9 is institutional quality.
-                                    </div>
-                                </div>
                             </div>
                             <div class="flex items-baseline gap-2">
                                 <span id="fund-f-score" class="text-3xl font-extrabold text-dark">8 / 9</span>
                                 <span id="fund-f-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat text-emerald-600">Strong Health</span>
                             </div>
-                            <p id="fund-f-desc" class="text-xs text-muted mt-3 leading-relaxed">Score 8/9 reflects strong balance sheet liquidity and operational momentum.</p>
+                            <p id="fund-f-desc" class="text-xs text-muted mt-3 leading-relaxed">...</p>
                         </div>
                     </div>
-
-                    <!-- Beneish M-Score -->
                     <div class="neo-pressed p-6 rounded-2xl flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-center mb-2">
                                 <span class="text-xs font-bold uppercase tracking-wider text-muted">Beneish M-Score (Forensic Detector)</span>
-                                <div class="group relative inline-block cursor-help">
-                                    <span class="inline-flex items-center justify-center w-4 h-4 rounded-full neo-flat text-[10px] text-muted hover:text-accent font-bold">?</span>
-                                    <div class="opacity-0 group-hover:opacity-100 transition-opacity absolute z-50 w-56 p-4 mt-2 text-xs text-muted neo-flat right-0 pointer-events-none">
-                                        <strong class="text-dark">Manipulation Test:</strong> Mathematical model assessing whether revenue or earnings are artificially inflated. Under -1.78 = Clean.
-                                    </div>
-                                </div>
                             </div>
                             <div class="flex items-baseline gap-2">
                                 <span id="fund-m-score" class="text-3xl font-extrabold text-dark">-2.45</span>
                                 <span id="fund-m-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat text-emerald-600">Unlikely Manipulator</span>
                             </div>
-                            <p id="fund-m-desc" class="text-xs text-muted mt-3 leading-relaxed">Financial statements show genuine revenue and balance sheet integrity.</p>
+                            <p id="fund-m-desc" class="text-xs text-muted mt-3 leading-relaxed">...</p>
                         </div>
                     </div>
-
                 </div>
+            </div>
 
+            <!-- Cumulative P&L Projection Chart -->
+            <div class="neo-flat p-6">
+                <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative Out-of-Sample P&L</h3>
+                <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
             
             <!-- Diagnostics -->
@@ -441,9 +443,9 @@
         function startLoadingSequence() {
             const loadTexts = [
                 `Connecting to Upstox for ${activeTicker}...`, 
-                "Running Forensic Accounting (Piotroski & Beneish)...",
-                "Computing 1-Year Time-Series Probability Cone...",
-                "Running Altman Z-Score & DuPont Solvency Engines...",
+                "Running Multi-Tier Data Waterfall (YFinance -> Jugaad -> AI)...",
+                "Computing Quarterly & 1-Year Extrapolations...",
+                "Running Forensic Audits & DuPont Engines...",
                 "Deploying LightGBM Classifiers...",
                 "Querying Gemini AI for Catalyst Sentiment..."
             ];
@@ -462,6 +464,48 @@
                     barEl.style.width = `${(i + 1) * 16}%`;
                 }
             }, 900);
+        }
+
+        function calculateTradeSetup() {
+            if (!latestData || !latestData.trade_setup) return;
+            const riskCap = parseFloat(document.getElementById('risk-input').value);
+            if (isNaN(riskCap) || riskCap <= 0) return;
+
+            const price = latestData.live_price;
+            const atr = latestData.trade_setup.atr_value;
+            const signal = latestData.quant_signal;
+            
+            let sl_price, tp_price, risk_per_share, qty, direction;
+
+            if (signal.includes("BULLISH")) {
+                sl_price = price - (2 * atr);
+                tp_price = price + (4 * atr); // 2R Target
+                risk_per_share = price - sl_price;
+                direction = "BUY / LONG";
+            } else if (signal.includes("BEARISH")) {
+                sl_price = price + (2 * atr);
+                tp_price = price - (4 * atr);
+                risk_per_share = sl_price - price;
+                direction = "SELL / SHORT";
+            } else {
+                sl_price = price;
+                tp_price = price;
+                risk_per_share = 0;
+                direction = "NO TRADE ZONE";
+            }
+
+            if (risk_per_share > 0) {
+                qty = Math.floor(riskCap / risk_per_share);
+            } else {
+                qty = 0;
+            }
+
+            document.getElementById('trade-qty').innerText = qty;
+            document.getElementById('trade-direction').innerText = direction;
+            document.getElementById('trade-direction').className = direction.includes("BUY") ? "text-[10px] font-semibold mt-1 text-emerald-600" : (direction.includes("SELL") ? "text-[10px] font-semibold mt-1 text-rose-500" : "text-[10px] font-semibold mt-1 text-muted");
+            
+            document.getElementById('trade-sl').innerText = `₹${sl_price.toFixed(2)}`;
+            document.getElementById('trade-tp').innerText = `₹${tp_price.toFixed(2)}`;
         }
 
         async function executeAnalysis() {
@@ -494,6 +538,11 @@
                         changeEl.innerText = `(${changeText})`;
                         changeEl.className = data.day_change_val >= 0 ? "text-xs font-semibold text-emerald-600" : "text-xs font-semibold text-rose-500";
 
+                        // SECTOR & INDUSTRY
+                        const secStr = data.fundamentals?.sector_profile?.split('(')[0] || 'Unknown';
+                        document.getElementById('disp-sector').innerText = secStr;
+                        document.getElementById('disp-industry').innerText = data.ui_industry || 'Unknown';
+
                         document.getElementById('disp-model').innerText = data.best_model;
                         document.getElementById('disp-prob').innerText = `${data.quant_probability}%`;
                         document.getElementById('disp-regime').innerText = data.current_regime;
@@ -502,35 +551,40 @@
                         sigEl.innerText = data.quant_signal;
                         sigEl.style.color = data.quant_signal.includes("BULLISH") ? "#38a169" : data.quant_signal.includes("BEARISH") ? "#e53e3e" : "#d69e2e";
 
+                        // TRADE SETUP
+                        calculateTradeSetup();
+
                         document.getElementById('disp-ai-score').innerText = data.ai_sentiment_score;
                         document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
 
-                        document.getElementById('disp-ret-bh').innerText = `${data.performance.buy_and_hold_pct}%`;
-                        document.getElementById('disp-ret-unfilt').innerText = `${data.performance.unfiltered_strat_pct}%`;
-                        document.getElementById('disp-ret-filt').innerText = `${data.performance.filtered_strat_pct}%`;
-
-                        document.getElementById('disp-diag-unfilt-trades').innerText = data.diagnostics.unfiltered_trades;
-                        document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
-                        document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
-                        document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
-
                         if (data.fundamentals) {
                             const f = data.fundamentals;
+                            // Source tracking badge
+                            if (f.sector_profile) {
+                                let badgeText = "Audited Data Feed";
+                                if (f.sector_profile.includes("Tier 2")) badgeText = "Jugaad Fallback";
+                                else if (f.sector_profile.includes("Tier 3") || f.sector_profile.includes("AI")) badgeText = "AI Agent Recovery";
+                                else if (f.sector_profile.includes("Timeout") || f.sector_profile.includes("Error")) badgeText = "Data Blocked";
+                                document.getElementById('fund-source-badge').innerText = badgeText;
+                            }
+
                             // Altman Z
                             document.getElementById('fund-z-score').innerText = f.altman_z.score;
                             const zBadge = document.getElementById('fund-z-badge');
                             zBadge.innerText = f.altman_z.zone;
-                            zBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.altman_z.status === 'green' ? 'text-emerald-600' : (f.altman_z.status === 'yellow' ? 'text-amber-600' : 'text-rose-500')}`;
+                            zBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.altman_z.status === 'green' ? 'text-emerald-600' : (f.altman_z.status === 'yellow' ? 'text-amber-600' : (f.altman_z.status === 'grey' ? 'text-gray-500' : 'text-rose-500'))}`;
                             document.getElementById('fund-z-desc').innerText = f.altman_z.desc;
+                            
+                            // Advanced Verdict Fix
                             if (f.altman_z.zone.includes("Safe") || f.altman_z.zone.includes("Exempt")) {
-    document.getElementById('fund-z-verdict').innerText = "Strong Solvency";
-} else if (f.altman_z.zone.includes("Grey")) {
-    document.getElementById('fund-z-verdict').innerText = "Moderate Solvency";
-} else if (f.altman_z.zone.includes("Blocked")) {
-    document.getElementById('fund-z-verdict').innerText = "Data Unavailable";
-} else {
-    document.getElementById('fund-z-verdict').innerText = "Distressed";
-}
+                                document.getElementById('fund-z-verdict').innerText = "Strong Solvency";
+                            } else if (f.altman_z.zone.includes("Grey")) {
+                                document.getElementById('fund-z-verdict').innerText = "Moderate Solvency";
+                            } else if (f.altman_z.zone.includes("Blocked") || f.altman_z.zone.includes("Missing")) {
+                                document.getElementById('fund-z-verdict').innerText = "Data Unavailable";
+                            } else {
+                                document.getElementById('fund-z-verdict').innerText = "Distressed";
+                            }
 
                             // DuPont
                             document.getElementById('fund-dupont-roe').innerText = `${f.dupont.roe}%`;
@@ -543,25 +597,31 @@
                             document.getElementById('fund-eva-score').innerText = `₹${f.eva.eva_cr} Cr`;
                             const evaBadge = document.getElementById('fund-eva-badge');
                             evaBadge.innerText = f.eva.status;
-                            evaBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.eva.status === 'Value Creator' ? 'text-emerald-600' : 'text-rose-500'}`;
+                            evaBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.eva.status === 'Value Creator' ? 'text-emerald-600' : (f.eva.status === 'Error' ? 'text-gray-500' : 'text-rose-500')}`;
                             document.getElementById('fund-eva-nopat').innerText = `₹${f.eva.nopat_cr} Cr`;
                             document.getElementById('fund-eva-wacc').innerText = `${f.eva.wacc_pct}%`;
                             document.getElementById('fund-eva-verdict').innerText = f.eva.verdict;
 
-                            // Forensics (Piotroski & Beneish)
+                            // Forensics
                             if (f.forensics) {
                                 document.getElementById('fund-f-score').innerText = `${f.forensics.piotroski_f.score} / 9`;
                                 const fBadge = document.getElementById('fund-f-badge');
                                 fBadge.innerText = f.forensics.piotroski_f.status;
-                                fBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.piotroski_f.badge === 'green' ? 'text-emerald-600' : (f.forensics.piotroski_f.badge === 'yellow' ? 'text-amber-600' : 'text-rose-500')}`;
+                                fBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.piotroski_f.badge === 'green' ? 'text-emerald-600' : (f.forensics.piotroski_f.badge === 'yellow' ? 'text-amber-600' : (f.forensics.piotroski_f.badge === 'grey' ? 'text-gray-500' : 'text-rose-500'))}`;
                                 document.getElementById('fund-f-desc').innerText = f.forensics.piotroski_f.desc;
 
                                 document.getElementById('fund-m-score').innerText = f.forensics.beneish_m.score;
                                 const mBadge = document.getElementById('fund-m-badge');
                                 mBadge.innerText = f.forensics.beneish_m.verdict;
-                                mBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.beneish_m.badge === 'green' ? 'text-emerald-600' : 'text-rose-500'}`;
+                                mBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.beneish_m.badge === 'green' ? 'text-emerald-600' : (f.forensics.beneish_m.badge === 'grey' ? 'text-gray-500' : 'text-rose-500')}`;
                                 document.getElementById('fund-m-desc').innerText = f.forensics.beneish_m.desc;
                             }
+                        }
+
+                        // Quarterly Projection Display
+                        if (data.quarterly_forecast) {
+                            document.getElementById('q-expected').innerText = `₹${data.quarterly_forecast.q_expected}`;
+                            document.getElementById('q-range').innerText = `₹${data.quarterly_forecast.q_lower} to ₹${data.quarterly_forecast.q_upper}`;
                         }
 
                         renderCandleChart(data.candles);
@@ -654,13 +714,10 @@
             });
         }
 
-        // --- ONE-CLICK INSTITUTIONAL PDF TEAR SHEET EXPORTER ---
         function exportPdfTearSheet() {
             if (!latestData) return alert("Please execute stock analysis first before downloading a report.");
-            
             const btn = document.getElementById('pdf-btn-text');
             btn.innerText = "Generating PDF...";
-
             const element = document.getElementById('dashboard-view');
             const opt = {
                 margin:       [10, 10, 10, 10],
@@ -669,13 +726,7 @@
                 html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                btn.innerText = "Download PDF Report";
-            }).catch(err => {
-                alert("PDF Generation error: " + err.message);
-                btn.innerText = "Download PDF Report";
-            });
+            html2pdf().set(opt).from(element).save().then(() => { btn.innerText = "Download PDF Report"; }).catch(err => { alert("PDF Generation error: " + err.message); btn.innerText = "Download PDF Report"; });
         }
 
         function copyTelemetryOutput() {
