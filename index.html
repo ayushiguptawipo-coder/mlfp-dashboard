@@ -56,7 +56,6 @@
 
     <div class="max-w-6xl mx-auto space-y-8">
         
-        <!-- Header -->
         <header class="fade-in-up flex flex-col md:flex-row justify-between items-end gap-4">
             <div>
                 <h1 id="human-greeting" class="text-4xl md:text-5xl font-bold tracking-tight">Good morning.</h1>
@@ -73,7 +72,6 @@
             </div>
         </header>
 
-        <!-- Search Bar -->
         <div class="fade-in-up w-full relative z-50">
             <div class="flex items-center mb-2">
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Universal Market Scanner</h3>
@@ -87,7 +85,6 @@
             </div>
         </div>
 
-        <!-- Real-Time Watchlist -->
         <div class="fade-in-up delay-1">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xs uppercase tracking-widest text-muted font-semibold">Live Watchlist & LTP</h3>
@@ -100,7 +97,6 @@
             </div>
         </div>
 
-        <!-- Controls Area -->
         <div class="fade-in-up delay-2 neo-flat p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
             <div class="space-y-2">
                 <div class="flex justify-between items-center text-sm">
@@ -125,7 +121,6 @@
             </div>
         </div>
 
-        <!-- Loading State -->
         <div id="loading-view" class="hidden neo-flat p-12 max-w-2xl mx-auto text-center fade-in-up">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent border-t-transparent mb-6"></div>
             <h3 class="text-2xl font-bold text-dark">Processing Intelligence</h3>
@@ -135,7 +130,6 @@
             </div>
         </div>
 
-        <!-- Dashboard View (PDF Target Container) -->
         <div id="dashboard-view" class="hidden space-y-8 fade-in-up">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -153,7 +147,7 @@
                     </div>
                 </div>
 
-                <!-- Signal & Real-Time Price Card with SECTOR INFO -->
+                <!-- Signal & Target Asset -->
                 <div class="neo-flat p-8 flex flex-col justify-between">
                     <div class="flex justify-between items-start">
                         <div>
@@ -163,7 +157,6 @@
                                 <span id="disp-live-price" class="text-2xl font-bold text-accent">₹---</span>
                                 <span id="disp-live-change" class="text-xs font-semibold text-muted">(--)</span>
                             </div>
-                            <!-- NEW SECTOR & INDUSTRY BADGES -->
                             <div class="flex items-center gap-2 mt-3">
                                 <span id="disp-sector" class="px-2 py-1 bg-gray-200 text-[#3a4049] text-[10px] font-bold uppercase rounded-md shadow-sm">Sector</span>
                                 <span id="disp-industry" class="px-2 py-1 bg-gray-200 text-[#788293] text-[10px] font-semibold uppercase rounded-md shadow-sm">Industry</span>
@@ -180,22 +173,23 @@
                 </div>
             </div>
 
-            <!-- Performance Overview Cards -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div class="neo-flat p-6 text-center">
-        <span class="text-[10px] uppercase tracking-widest text-muted font-bold block mb-2">Benchmark Hold</span>
-        <span id="disp-perf-bh" class="text-3xl font-extrabold text-dark">---</span>
-    </div>
-    <div class="neo-flat p-6 text-center">
-        <span class="text-[10px] uppercase tracking-widest text-muted font-bold block mb-2">Naive Strategy</span>
-        <span id="disp-perf-naive" class="text-3xl font-extrabold text-dark">---</span>
-    </div>
-    <div class="neo-flat p-6 text-center">
-        <span class="text-[10px] uppercase tracking-widest text-muted font-bold block mb-2">Regime-Filtered</span>
-        <span id="disp-perf-strat" class="text-3xl font-extrabold text-dark">---</span>
-    </div>
-</div>
-            <!-- Candlestick Chart Card -->
+            <!-- RESTORED: PERFORMANCE OVERVIEW CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="neo-flat p-6 text-center">
+                    <span class="text-[10px] uppercase tracking-widest text-muted font-bold block mb-2">Benchmark Hold</span>
+                    <span id="disp-perf-bh-card" class="text-3xl font-extrabold text-dark">---</span>
+                </div>
+                <div class="neo-flat p-6 text-center">
+                    <span class="text-[10px] uppercase tracking-widest text-muted font-bold block mb-2">Naive Strategy</span>
+                    <span id="disp-perf-naive-card" class="text-3xl font-extrabold text-dark">---</span>
+                </div>
+                <div class="neo-flat p-6 text-center">
+                    <span class="text-[10px] uppercase tracking-widest text-muted font-bold block mb-2">Regime-Filtered</span>
+                    <span id="disp-perf-strat-card" class="text-3xl font-extrabold text-dark">---</span>
+                </div>
+            </div>
+
+            <!-- Candlestick Chart -->
             <div class="neo-flat p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Asset Price Action (Candlesticks)</h3>
@@ -204,7 +198,7 @@
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
             </div>
 
-            <!-- NEW: ACTIONABLE RISK MANAGEMENT & TRADE SETUP CARD -->
+            <!-- Risk Management Calculator -->
             <div class="neo-flat p-8">
                 <div class="flex justify-between items-center border-b border-gray-300 pb-4 mb-6">
                     <div>
@@ -215,7 +209,6 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <!-- Capital Input -->
                     <div class="neo-pressed p-5 rounded-2xl col-span-1">
                         <label class="block text-[11px] font-bold uppercase tracking-widest text-muted mb-2">Max Capital Risk (₹)</label>
                         <div class="flex items-center text-xl font-bold text-dark border-b-2 border-accent pb-1">
@@ -225,7 +218,6 @@
                         <p class="text-[10px] text-muted mt-2">Amount you are willing to lose if Stop Loss hits.</p>
                     </div>
 
-                    <!-- Setup Output Cards -->
                     <div class="col-span-3 grid grid-cols-3 gap-4">
                         <div class="neo-flat p-5 text-center flex flex-col justify-center rounded-2xl">
                             <span class="text-[10px] uppercase font-bold text-muted mb-1">Recommended Shares</span>
@@ -246,7 +238,7 @@
                 </div>
             </div>
 
-            <!-- 1-Year & Quarterly Projection Chart -->
+            <!-- Projections -->
             <div id="forecast-container" class="neo-flat p-6 hidden">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                     <div>
@@ -254,7 +246,6 @@
                         <p class="text-[10px] text-muted mt-1">Log-Drift Extrapolation with 95% Confidence Interval</p>
                     </div>
                     
-                    <!-- NEW QUARTERLY PROJECTION BAR -->
                     <div class="neo-pressed px-4 py-2 mt-4 md:mt-0 flex gap-4 text-xs font-semibold">
                         <div class="border-r border-gray-300 pr-4">
                             <span class="text-[10px] text-muted uppercase block">Q3 Expected (3-Mo)</span>
@@ -269,7 +260,7 @@
                 <div class="relative h-80 w-full"><canvas id="forecastChart"></canvas></div>
             </div>
 
-            <!-- INSTITUTIONAL FUNDAMENTAL & FORENSIC ACCOUNTING PANEL -->
+            <!-- Institutional Fundamentals -->
             <div class="neo-flat p-8 space-y-6">
                 <div class="flex justify-between items-center border-b border-gray-300 pb-4">
                     <div>
@@ -361,14 +352,16 @@
                 </div>
             </div>
 
-            <!-- Cumulative P&L Projection Chart -->
+            <!-- P&L Chart -->
             <div class="neo-flat p-6">
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative Out-of-Sample P&L</h3>
                 <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
             
-            <!-- Diagnostics -->
-            <div class="neo-flat p-6 grid grid-cols-2 gap-4 text-center text-sm relative">
+            <!-- BOTTOM DIAGNOSTICS & PERFORMANCE GRID -->
+            <div class="neo-flat p-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm relative">
+                <div><p class="text-muted mb-1">Buy & Hold Return</p><p id="disp-diag-perf-bh" class="font-bold text-lg text-dark">0%</p></div>
+                <div><p class="text-muted mb-1">Strategy Return (Filtered)</p><p id="disp-diag-perf-strat" class="font-bold text-lg text-accent">0%</p></div>
                 <div><p class="text-muted mb-1">Unfiltered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-unfilt-trades">0</span> / <span id="disp-diag-unfilt-frict" class="text-red-500">0%</span></p></div>
                 <div><p class="text-muted mb-1">Filtered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-filt-trades">0</span> / <span id="disp-diag-filt-frict" class="text-green-600">0%</span></p></div>
             </div>
@@ -494,7 +487,7 @@
 
             if (signal.includes("BULLISH")) {
                 sl_price = price - (2 * atr);
-                tp_price = price + (4 * atr); // 2R Target
+                tp_price = price + (4 * atr);
                 risk_per_share = price - sl_price;
                 direction = "BUY / LONG";
             } else if (signal.includes("BEARISH")) {
@@ -553,7 +546,6 @@
                         changeEl.innerText = `(${changeText})`;
                         changeEl.className = data.day_change_val >= 0 ? "text-xs font-semibold text-emerald-600" : "text-xs font-semibold text-rose-500";
 
-                        // SECTOR & INDUSTRY
                         const secStr = data.fundamentals?.sector_profile?.split('(')[0] || 'Unknown';
                         document.getElementById('disp-sector').innerText = secStr;
                         document.getElementById('disp-industry').innerText = data.ui_industry || 'Unknown';
@@ -566,31 +558,49 @@
                         sigEl.innerText = data.quant_signal;
                         sigEl.style.color = data.quant_signal.includes("BULLISH") ? "#38a169" : data.quant_signal.includes("BEARISH") ? "#e53e3e" : "#d69e2e";
 
-                        // TRADE SETUP
                         calculateTradeSetup();
 
                         document.getElementById('disp-ai-score').innerText = data.ai_sentiment_score;
                         document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
 
+                        // RESTORED: THE 3 PERFORMANCE CARDS MAPPING
+                        const perfBH = data.performance.buy_and_hold_pct;
+                        const perfNaive = data.performance.unfiltered_strat_pct;
+                        const perfStrat = data.performance.filtered_strat_pct;
+
+                        document.getElementById('disp-perf-bh-card').innerText = `${perfBH}%`;
+                        document.getElementById('disp-perf-bh-card').className = `text-3xl font-extrabold ${perfBH >= 0 ? 'text-emerald-600' : 'text-rose-500'}`;
+
+                        document.getElementById('disp-perf-naive-card').innerText = `${perfNaive}%`;
+                        document.getElementById('disp-perf-naive-card').className = `text-3xl font-extrabold ${perfNaive >= 0 ? 'text-emerald-600' : 'text-rose-500'}`;
+
+                        document.getElementById('disp-perf-strat-card').innerText = `${perfStrat}%`;
+                        document.getElementById('disp-perf-strat-card').className = `text-3xl font-extrabold ${perfStrat >= 0 ? 'text-emerald-600' : 'text-rose-500'}`;
+
+                        // RESTORED: THE BOTTOM DIAGNOSTIC GRID
+                        document.getElementById('disp-diag-perf-bh').innerText = `${perfBH}%`;
+                        document.getElementById('disp-diag-perf-strat').innerText = `${perfStrat}%`;
+                        document.getElementById('disp-diag-unfilt-trades').innerText = data.diagnostics.unfiltered_trades;
+                        document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
+                        document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
+                        document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
+
                         if (data.fundamentals) {
                             const f = data.fundamentals;
-                            // Source tracking badge
                             if (f.sector_profile) {
                                 let badgeText = "Audited Data Feed";
-                                if (f.sector_profile.includes("Tier 2")) badgeText = "Jugaad Fallback";
+                                if (f.sector_profile.includes("Tier 2") || f.sector_profile.includes("Jugaad")) badgeText = "Jugaad Fallback";
                                 else if (f.sector_profile.includes("Tier 3") || f.sector_profile.includes("AI")) badgeText = "AI Agent Recovery";
-                                else if (f.sector_profile.includes("Timeout") || f.sector_profile.includes("Error")) badgeText = "Data Blocked";
+                                else if (f.sector_profile.includes("Timeout") || f.sector_profile.includes("Error") || f.sector_profile.includes("Fail")) badgeText = "Data Blocked";
                                 document.getElementById('fund-source-badge').innerText = badgeText;
                             }
 
-                            // Altman Z
                             document.getElementById('fund-z-score').innerText = f.altman_z.score;
                             const zBadge = document.getElementById('fund-z-badge');
                             zBadge.innerText = f.altman_z.zone;
                             zBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.altman_z.status === 'green' ? 'text-emerald-600' : (f.altman_z.status === 'yellow' ? 'text-amber-600' : (f.altman_z.status === 'grey' ? 'text-gray-500' : 'text-rose-500'))}`;
                             document.getElementById('fund-z-desc').innerText = f.altman_z.desc;
                             
-                            // Advanced Verdict Fix
                             if (f.altman_z.zone.includes("Safe") || f.altman_z.zone.includes("Exempt")) {
                                 document.getElementById('fund-z-verdict').innerText = "Strong Solvency";
                             } else if (f.altman_z.zone.includes("Grey")) {
@@ -601,14 +611,12 @@
                                 document.getElementById('fund-z-verdict').innerText = "Distressed";
                             }
 
-                            // DuPont
                             document.getElementById('fund-dupont-roe').innerText = `${f.dupont.roe}%`;
                             document.getElementById('fund-dupont-margin').innerText = `${f.dupont.profit_margin}%`;
                             document.getElementById('fund-dupont-turnover').innerText = `${f.dupont.asset_turnover}x`;
                             document.getElementById('fund-dupont-leverage').innerText = `${f.dupont.financial_leverage}x`;
                             document.getElementById('fund-dupont-verdict').innerText = f.dupont.verdict;
 
-                            // EVA
                             document.getElementById('fund-eva-score').innerText = `₹${f.eva.eva_cr} Cr`;
                             const evaBadge = document.getElementById('fund-eva-badge');
                             evaBadge.innerText = f.eva.status;
@@ -617,7 +625,6 @@
                             document.getElementById('fund-eva-wacc').innerText = `${f.eva.wacc_pct}%`;
                             document.getElementById('fund-eva-verdict').innerText = f.eva.verdict;
 
-                            // Forensics
                             if (f.forensics) {
                                 document.getElementById('fund-f-score').innerText = `${f.forensics.piotroski_f.score} / 9`;
                                 const fBadge = document.getElementById('fund-f-badge');
@@ -633,7 +640,6 @@
                             }
                         }
 
-                        // Quarterly Projection Display
                         if (data.quarterly_forecast) {
                             document.getElementById('q-expected').innerText = `₹${data.quarterly_forecast.q_expected}`;
                             document.getElementById('q-range').innerText = `₹${data.quarterly_forecast.q_lower} to ₹${data.quarterly_forecast.q_upper}`;
