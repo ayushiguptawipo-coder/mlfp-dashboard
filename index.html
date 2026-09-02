@@ -47,6 +47,10 @@
         
         #search-dropdown::-webkit-scrollbar { width: 6px; }
         #search-dropdown::-webkit-scrollbar-thumb { background: var(--shadow-dark); border-radius: 3px; }
+        
+        /* NEW: Hide scrollbar for the market overview tape */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
@@ -56,6 +60,7 @@
 
     <div class="max-w-6xl mx-auto space-y-8">
         
+        <!-- Header -->
         <header class="fade-in-up flex flex-col md:flex-row justify-between items-end gap-4">
             <div>
                 <h1 id="human-greeting" class="text-4xl md:text-5xl font-bold tracking-tight">Good morning.</h1>
@@ -72,7 +77,18 @@
             </div>
         </header>
 
-        <div class="fade-in-up w-full relative z-50">
+        <!-- NEW: Broad Market Indices Overview -->
+        <div class="fade-in-up delay-1 w-full">
+            <h3 class="text-xs uppercase tracking-widest text-muted font-semibold mb-3">Broad Market Indices (1Y Trend)</h3>
+            <div id="market-overview-grid" class="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
+                <div class="neo-pressed h-28 w-full flex items-center justify-center text-sm text-muted animate-pulse rounded-2xl">
+                    Connecting to live index stream...
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="fade-in-up delay-1 w-full relative z-50">
             <div class="flex items-center mb-2">
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Universal Market Scanner</h3>
             </div>
@@ -85,7 +101,8 @@
             </div>
         </div>
 
-        <div class="fade-in-up delay-1">
+        <!-- Real-Time Watchlist -->
+        <div class="fade-in-up delay-2">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xs uppercase tracking-widest text-muted font-semibold">Live Watchlist & LTP</h3>
                 <span class="text-[11px] text-muted flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Live Upstox Quotes</span>
@@ -97,6 +114,7 @@
             </div>
         </div>
 
+        <!-- Controls Area -->
         <div class="fade-in-up delay-2 neo-flat p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
             <div class="space-y-2">
                 <div class="flex justify-between items-center text-sm">
@@ -121,6 +139,7 @@
             </div>
         </div>
 
+        <!-- Loading State -->
         <div id="loading-view" class="hidden neo-flat p-12 max-w-2xl mx-auto text-center fade-in-up">
             <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-accent border-t-transparent mb-6"></div>
             <h3 class="text-2xl font-bold text-dark">Processing Intelligence</h3>
@@ -130,6 +149,7 @@
             </div>
         </div>
 
+        <!-- Dashboard View (PDF Target Container) -->
         <div id="dashboard-view" class="hidden space-y-8 fade-in-up">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -147,7 +167,7 @@
                     </div>
                 </div>
 
-                <!-- Signal & Target Asset -->
+                <!-- Signal & Real-Time Price Card with SECTOR INFO -->
                 <div class="neo-flat p-8 flex flex-col justify-between">
                     <div class="flex justify-between items-start">
                         <div>
@@ -157,6 +177,7 @@
                                 <span id="disp-live-price" class="text-2xl font-bold text-accent">₹---</span>
                                 <span id="disp-live-change" class="text-xs font-semibold text-muted">(--)</span>
                             </div>
+                            <!-- SECTOR & INDUSTRY BADGES -->
                             <div class="flex items-center gap-2 mt-3">
                                 <span id="disp-sector" class="px-2 py-1 bg-gray-200 text-[#3a4049] text-[10px] font-bold uppercase rounded-md shadow-sm">Sector</span>
                                 <span id="disp-industry" class="px-2 py-1 bg-gray-200 text-[#788293] text-[10px] font-semibold uppercase rounded-md shadow-sm">Industry</span>
@@ -173,7 +194,7 @@
                 </div>
             </div>
 
-            <!-- PERFORMANCE OVERVIEW CARDS -->
+            <!-- Performance Overview Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="neo-flat p-6 text-center">
                     <span class="text-[10px] uppercase tracking-widest text-muted font-bold block mb-2">Benchmark Hold</span>
@@ -189,7 +210,7 @@
                 </div>
             </div>
 
-            <!-- Candlestick Chart -->
+            <!-- Candlestick Chart Card -->
             <div class="neo-flat p-6">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-sm uppercase tracking-widest text-muted font-semibold">Asset Price Action (Candlesticks)</h3>
@@ -198,7 +219,7 @@
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
             </div>
 
-            <!-- Risk Management Calculator -->
+            <!-- ACTIONABLE RISK MANAGEMENT & TRADE SETUP CARD -->
             <div class="neo-flat p-8">
                 <div class="flex justify-between items-center border-b border-gray-300 pb-4 mb-6">
                     <div>
@@ -209,6 +230,7 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- Capital Input -->
                     <div class="neo-pressed p-5 rounded-2xl col-span-1">
                         <label class="block text-[11px] font-bold uppercase tracking-widest text-muted mb-2">Max Capital Risk (₹)</label>
                         <div class="flex items-center text-xl font-bold text-dark border-b-2 border-accent pb-1">
@@ -218,6 +240,7 @@
                         <p class="text-[10px] text-muted mt-2">Amount you are willing to lose if Stop Loss hits.</p>
                     </div>
 
+                    <!-- Setup Output Cards -->
                     <div class="col-span-3 grid grid-cols-3 gap-4">
                         <div class="neo-flat p-5 text-center flex flex-col justify-center rounded-2xl">
                             <span class="text-[10px] uppercase font-bold text-muted mb-1">Recommended Shares</span>
@@ -238,7 +261,7 @@
                 </div>
             </div>
 
-            <!-- Projections -->
+            <!-- 1-Year & Quarterly Projection Chart -->
             <div id="forecast-container" class="neo-flat p-6 hidden">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                     <div>
@@ -260,7 +283,7 @@
                 <div class="relative h-80 w-full"><canvas id="forecastChart"></canvas></div>
             </div>
 
-            <!-- Institutional Fundamentals -->
+            <!-- INSTITUTIONAL FUNDAMENTAL & FORENSIC ACCOUNTING PANEL -->
             <div class="neo-flat p-8 space-y-6">
                 <div class="flex justify-between items-center border-b border-gray-300 pb-4">
                     <div>
@@ -352,13 +375,13 @@
                 </div>
             </div>
 
-            <!-- P&L Chart -->
+            <!-- Cumulative P&L Projection Chart -->
             <div class="neo-flat p-6">
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative Out-of-Sample P&L</h3>
                 <div class="relative h-80 w-full"><canvas id="pnlChart"></canvas></div>
             </div>
             
-            <!-- BOTTOM DIAGNOSTICS & PERFORMANCE GRID -->
+            <!-- Diagnostics -->
             <div class="neo-flat p-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm relative">
                 <div><p class="text-muted mb-1">Buy & Hold Return</p><p id="disp-diag-perf-bh" class="font-bold text-lg text-dark">0%</p></div>
                 <div><p class="text-muted mb-1">Strategy Return (Filtered)</p><p id="disp-diag-perf-strat" class="font-bold text-lg text-accent">0%</p></div>
@@ -384,7 +407,67 @@
         const hr = new Date().getHours();
         document.getElementById('human-greeting').innerText = (hr < 12) ? "Good morning." : (hr < 18) ? "Good afternoon." : "Good evening.";
 
+        // NEW: Fetch broad market indices
+        async function fetchMarketOverview() {
+            try {
+                const res = await fetch(`${RENDER_BACKEND_URL}/api/market-overview`);
+                const data = await res.json();
+                const container = document.getElementById('market-overview-grid');
+                container.innerHTML = '';
+                
+                data.overview.forEach((idxData, i) => {
+                    const isPositive = idxData.change >= 0;
+                    const changeColor = isPositive ? 'text-emerald-600' : 'text-rose-500';
+                    const changeSign = isPositive ? '+' : '';
+                    const chartId = `sparkline-${i}`;
+                    
+                    container.innerHTML += `
+                        <div class="neo-flat p-4 min-w-[200px] flex-shrink-0 flex flex-col justify-between">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="text-xs font-bold text-dark">${idxData.name}</span>
+                                <span class="text-[10px] font-semibold ${changeColor}">${changeSign}${idxData.change}</span>
+                            </div>
+                            <span class="text-lg font-extrabold text-accent mb-2">₹${idxData.price}</span>
+                            <div class="h-10 w-full"><canvas id="${chartId}"></canvas></div>
+                        </div>
+                    `;
+                });
+                
+                data.overview.forEach((idxData, i) => {
+                    if(idxData.sparkline && idxData.sparkline.length > 0) {
+                        const ctx = document.getElementById(`sparkline-${i}`).getContext('2d');
+                        const isPos = idxData.change >= 0;
+                        const color = isPos ? '#38a169' : '#e53e3e';
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: idxData.sparkline.map((_, index) => index),
+                                datasets: [{
+                                    data: idxData.sparkline,
+                                    borderColor: color,
+                                    borderWidth: 1.5,
+                                    pointRadius: 0,
+                                    tension: 0.1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                                scales: { x: { display: false }, y: { display: false } },
+                                layout: { padding: 0 }
+                            }
+                        });
+                    }
+                });
+            } catch (err) {
+                document.getElementById('market-overview-grid').innerHTML = `<p class="text-red-500 text-sm pl-2">Failed to load market indices.</p>`;
+            }
+        }
+
         window.onload = async () => {
+            fetchMarketOverview();
+            
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/scanner`);
                 const data = await res.json();
@@ -588,7 +671,7 @@
                             if (f.sector_profile) {
                                 let badgeText = "Audited Data Feed";
                                 if (f.sector_profile.includes("Tier 2") || f.sector_profile.includes("Jugaad")) badgeText = "Jugaad Fallback";
-                                else if (f.sector_profile.includes("Tier 3") || f.sector_profile.includes("AI")) badgeText = "AI Agent Recovery";
+                                else if (f.sector_profile.includes("Tier 3") || f.sector_profile.includes("Tier 5") || f.sector_profile.includes("AI")) badgeText = "AI Agent Recovery";
                                 else if (f.sector_profile.includes("Timeout") || f.sector_profile.includes("Error") || f.sector_profile.includes("Fail")) badgeText = "Data Blocked";
                                 document.getElementById('fund-source-badge').innerText = badgeText;
                             }
@@ -633,7 +716,7 @@
                                 document.getElementById('fund-m-score').innerText = f.forensics.beneish_m.score;
                                 const mBadge = document.getElementById('fund-m-badge');
                                 mBadge.innerText = f.forensics.beneish_m.verdict;
-                                mBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.beneish_m.badge === 'green' ? 'text-emerald-600' : (f.forensics.beneish_m.badge === 'grey' ? 'text-gray-500' : 'text-rose-500'))}`;
+                                mBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.beneish_m.badge === 'green' ? 'text-emerald-600' : (f.forensics.beneish_m.badge === 'grey' ? 'text-gray-500' : 'text-rose-500')}`;
                                 document.getElementById('fund-m-desc').innerText = f.forensics.beneish_m.desc;
                             }
                         }
