@@ -578,8 +578,10 @@
                         document.getElementById('disp-perf-strat-card').className = `text-3xl font-extrabold ${perfStrat >= 0 ? 'text-emerald-600' : 'text-rose-500'}`;
 
                         // RESTORED: THE BOTTOM DIAGNOSTIC GRID
-                        document.getElementById('disp-diag-perf-bh').innerText = `${perfBH}%`;
-                        document.getElementById('disp-diag-perf-strat').innerText = `${perfStrat}%`;
+                        const sharpeStrat = data.diagnostics.sharpe_ratio || 0.0;
+const maxDd = data.diagnostics.max_drawdown_pct || 0.0;
+document.getElementById('disp-diag-perf-bh').innerText = `${perfBH}%`;
+document.getElementById('disp-diag-perf-strat').innerHTML = `<span class="text-accent">${perfStrat}%</span> <span class="text-[10px] text-muted block mt-1">Sharpe: ${sharpeStrat} | DD: ${maxDd}%</span>`;
                         document.getElementById('disp-diag-unfilt-trades').innerText = data.diagnostics.unfiltered_trades;
                         document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
                         document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
