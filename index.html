@@ -173,7 +173,7 @@
                 </div>
             </div>
 
-            <!-- RESTORED: PERFORMANCE OVERVIEW CARDS -->
+            <!-- PERFORMANCE OVERVIEW CARDS -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="neo-flat p-6 text-center">
                     <span class="text-[10px] uppercase tracking-widest text-muted font-bold block mb-2">Benchmark Hold</span>
@@ -563,7 +563,6 @@
                         document.getElementById('disp-ai-score').innerText = data.ai_sentiment_score;
                         document.getElementById('disp-ai-summary').innerText = `"${data.ai_summary}"`;
 
-                        // RESTORED: THE 3 PERFORMANCE CARDS MAPPING
                         const perfBH = data.performance.buy_and_hold_pct;
                         const perfNaive = data.performance.unfiltered_strat_pct;
                         const perfStrat = data.performance.filtered_strat_pct;
@@ -577,11 +576,8 @@
                         document.getElementById('disp-perf-strat-card').innerText = `${perfStrat}%`;
                         document.getElementById('disp-perf-strat-card').className = `text-3xl font-extrabold ${perfStrat >= 0 ? 'text-emerald-600' : 'text-rose-500'}`;
 
-                        // RESTORED: THE BOTTOM DIAGNOSTIC GRID
-                        const sharpeStrat = data.diagnostics.sharpe_ratio || 0.0;
-const maxDd = data.diagnostics.max_drawdown_pct || 0.0;
-document.getElementById('disp-diag-perf-bh').innerText = `${perfBH}%`;
-document.getElementById('disp-diag-perf-strat').innerHTML = `<span class="text-accent">${perfStrat}%</span> <span class="text-[10px] text-muted block mt-1">Sharpe: ${sharpeStrat} | DD: ${maxDd}%</span>`;
+                        document.getElementById('disp-diag-perf-bh').innerText = `${perfBH}%`;
+                        document.getElementById('disp-diag-perf-strat').innerText = `${perfStrat}%`;
                         document.getElementById('disp-diag-unfilt-trades').innerText = data.diagnostics.unfiltered_trades;
                         document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
                         document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
@@ -637,7 +633,7 @@ document.getElementById('disp-diag-perf-strat').innerHTML = `<span class="text-a
                                 document.getElementById('fund-m-score').innerText = f.forensics.beneish_m.score;
                                 const mBadge = document.getElementById('fund-m-badge');
                                 mBadge.innerText = f.forensics.beneish_m.verdict;
-                                mBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.beneish_m.badge === 'green' ? 'text-emerald-600' : (f.forensics.beneish_m.badge === 'grey' ? 'text-gray-500' : 'text-rose-500')}`;
+                                mBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.beneish_m.badge === 'green' ? 'text-emerald-600' : (f.forensics.beneish_m.badge === 'grey' ? 'text-gray-500' : 'text-rose-500'))}`;
                                 document.getElementById('fund-m-desc').innerText = f.forensics.beneish_m.desc;
                             }
                         }
