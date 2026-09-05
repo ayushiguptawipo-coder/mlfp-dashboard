@@ -61,12 +61,17 @@
             <div>
                 <h1 id="human-greeting" class="text-4xl md:text-5xl font-bold tracking-tight">Good morning.</h1>
             </div>
-            <div class="flex items-center gap-3">
-                <button onclick="exportPdfTearSheet()" class="neo-btn px-5 py-2 text-sm text-accent font-semibold flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- NEW: Download Available Equities Button -->
+                <button onclick="downloadCoveredEquities()" class="neo-btn px-4 py-2 text-xs md:text-sm font-semibold text-dark flex items-center gap-2">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span id="covered-btn-text">Covered Equities (59)</span>
+                </button>
+                <button onclick="exportPdfTearSheet()" class="neo-btn px-4 py-2 text-xs md:text-sm text-accent font-semibold flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                     <span id="pdf-btn-text">Download PDF Report</span>
                 </button>
-                <button onclick="copyTelemetryOutput()" class="neo-btn px-5 py-2 text-sm text-muted flex items-center gap-2">
+                <button onclick="copyTelemetryOutput()" class="neo-btn px-4 py-2 text-xs md:text-sm text-muted flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                     <span id="copy-btn-text">Copy Telemetry</span>
                 </button>
@@ -81,7 +86,7 @@
             <div class="relative w-full md:w-2/3">
                 <div class="flex items-center neo-pressed px-5 py-4">
                     <svg class="w-5 h-5 text-muted mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" id="search-input" class="w-full bg-transparent outline-none text-dark font-medium placeholder-muted" placeholder="Search any NSE/BSE stock (e.g. TATAMOTORS, ZOMATO)..." autocomplete="off" oninput="debounceSearch(this.value)">
+                    <input type="text" id="search-input" class="w-full bg-transparent outline-none text-dark font-medium placeholder-muted" placeholder="Search institutional stocks (e.g. RELIANCE, TCS, HDFCBANK)..." autocomplete="off" oninput="debounceSearch(this.value)">
                 </div>
                 <div id="search-dropdown" class="absolute w-full mt-3 neo-flat hidden max-h-64 overflow-y-auto overflow-x-hidden border border-[#ffffff33]"></div>
             </div>
@@ -100,7 +105,7 @@
             </div>
         </div>
 
-        <!-- NEWLY PLACED: Broad Market Indices Overview (Monthly Bar Charts) -->
+        <!-- Broad Market Indices Overview -->
         <div class="fade-in-up delay-2 w-full">
             <h3 class="text-xs uppercase tracking-widest text-muted font-semibold mb-3">Broad Market Indices (Monthly Return %)</h3>
             <div id="market-overview-grid" class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -173,10 +178,9 @@
                                 <span id="disp-live-price" class="text-2xl font-bold text-accent">₹---</span>
                                 <span id="disp-live-change" class="text-xs font-semibold text-muted">(--)</span>
                             </div>
-                            <!-- SECTOR & INDUSTRY BADGES -->
                             <div class="flex items-center gap-2 mt-3">
-                                <span id="disp-sector" class="px-2 py-1 bg-gray-200 text-[#3a4049] text-[10px] font-bold uppercase rounded-md shadow-sm">Sector</span>
-                                <span id="disp-industry" class="px-2 py-1 bg-gray-200 text-[#788293] text-[10px] font-semibold uppercase rounded-md shadow-sm">Industry</span>
+                                <span id="disp-sector" class="px-2.5 py-1 bg-gray-200 text-[#3a4049] text-[10px] font-bold uppercase rounded-md shadow-sm">Sector</span>
+                                <span id="disp-industry" class="px-2.5 py-1 bg-gray-200 text-[#788293] text-[10px] font-semibold uppercase rounded-md shadow-sm">Industry</span>
                             </div>
                         </div>
                         <span id="disp-signal" class="inline-block px-5 py-2 rounded-full font-bold tracking-widest text-xs neo-pressed">WAITING</span>
@@ -215,17 +219,17 @@
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
             </div>
 
-            <!-- ACTIONABLE RISK MANAGEMENT & TRADE SETUP CARD -->
+            <!-- ACTIONABLE RISK MANAGEMENT CARD (CLEAN & INTUITIVE) -->
             <div class="neo-flat p-8">
                 <div class="flex justify-between items-center border-b border-gray-300 pb-4 mb-6">
                     <div>
                         <h3 class="text-lg font-bold text-dark">Actionable Risk Management & Trade Setup</h3>
                         <p class="text-xs text-muted">Dynamic Volatility-Based Position Sizing (ATR Driven)</p>
                     </div>
-                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Calculator</span>
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Quant Risk Model</span>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
                     <!-- Capital Input -->
                     <div class="neo-pressed p-5 rounded-2xl col-span-1">
                         <label class="block text-[11px] font-bold uppercase tracking-widest text-muted mb-2">Max Capital Risk (₹)</label>
@@ -233,11 +237,11 @@
                             <span class="mr-1 text-muted">₹</span>
                             <input type="number" id="risk-input" value="5000" class="w-full" oninput="calculateTradeSetup()">
                         </div>
-                        <p class="text-[10px] text-muted mt-2">Amount you are willing to lose if Stop Loss hits.</p>
+                        <p class="text-[10px] text-muted mt-2">Maximum tolerated loss if Stop Loss is hit.</p>
                     </div>
 
-                    <!-- Setup Output Cards -->
-                    <div class="col-span-3 grid grid-cols-3 gap-4">
+                    <!-- Dynamic Output Containers -->
+                    <div id="trade-active-container" class="col-span-3 grid grid-cols-3 gap-4">
                         <div class="neo-flat p-5 text-center flex flex-col justify-center rounded-2xl">
                             <span class="text-[10px] uppercase font-bold text-muted mb-1">Recommended Shares</span>
                             <span id="trade-qty" class="text-3xl font-extrabold text-accent">0</span>
@@ -246,12 +250,27 @@
                         <div class="neo-flat p-5 text-center flex flex-col justify-center rounded-2xl border-l-4 border-rose-500">
                             <span class="text-[10px] uppercase font-bold text-muted mb-1">Dynamic Stop Loss</span>
                             <span id="trade-sl" class="text-2xl font-bold text-dark">₹0.00</span>
-                            <span class="text-[10px] text-rose-500 mt-1">ATR Based</span>
+                            <span class="text-[10px] text-rose-500 mt-1">2.0x ATR Buffer</span>
                         </div>
                         <div class="neo-flat p-5 text-center flex flex-col justify-center rounded-2xl border-l-4 border-emerald-500">
                             <span class="text-[10px] uppercase font-bold text-muted mb-1">Take Profit Target (2R)</span>
                             <span id="trade-tp" class="text-2xl font-bold text-dark">₹0.00</span>
                             <span class="text-[10px] text-emerald-600 mt-1">Reward Profile</span>
+                        </div>
+                    </div>
+
+                    <!-- Neutral Standby Container (Shown when Neutral) -->
+                    <div id="trade-neutral-container" class="hidden col-span-3 neo-pressed p-6 rounded-2xl flex flex-col justify-center">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                            <h4 class="text-sm font-bold text-dark uppercase tracking-wide">Capital Preservation Active (No Directional Edge)</h4>
+                        </div>
+                        <p class="text-xs text-muted leading-relaxed">
+                            The quant classification model identifies this asset in a neutral consolidation zone. No directional trigger is currently active. Standby for a volatility breakout.
+                        </p>
+                        <div class="mt-4 pt-3 border-t border-gray-300 flex flex-wrap gap-6 text-xs">
+                            <div><span class="text-muted">Breakout Long Above:</span> <span id="neutral-breakout-up" class="font-bold text-emerald-600">₹---</span></div>
+                            <div><span class="text-muted">Breakdown Short Below:</span> <span id="neutral-breakout-down" class="font-bold text-rose-500">₹---</span></div>
                         </div>
                     </div>
                 </div>
@@ -371,6 +390,35 @@
                 </div>
             </div>
 
+            <!-- NEW: TOP 5 PEER COMPARISON PANEL -->
+            <div class="neo-flat p-8 space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-300 pb-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-dark">Top 5 Sector Competitors & Peer Audit</h3>
+                        <p class="text-xs text-muted">Relative Valuation & Solvency vs. Sector Cohort</p>
+                    </div>
+                    <span class="text-xs text-muted font-medium">Click peer to inspect</span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="text-muted border-b border-gray-300 uppercase tracking-wider text-[10px]">
+                                <th class="py-3 px-2">Ticker</th>
+                                <th class="py-3 px-2">Sector Profile</th>
+                                <th class="py-3 px-2">Market Cap (₹ Cr)</th>
+                                <th class="py-3 px-2">DuPont ROE</th>
+                                <th class="py-3 px-2">Altman Z-Score</th>
+                                <th class="py-3 px-2 text-right">Solvency Zone</th>
+                            </tr>
+                        </thead>
+                        <tbody id="peer-table-body">
+                            <tr><td colspan="6" class="py-4 text-center text-muted">Loading sector peers...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <!-- Cumulative P&L Projection Chart -->
             <div class="neo-flat p-6">
                 <h3 class="text-sm uppercase tracking-widest text-muted font-semibold mb-6">Cumulative Out-of-Sample P&L</h3>
@@ -403,7 +451,42 @@
         const hr = new Date().getHours();
         document.getElementById('human-greeting').innerText = (hr < 12) ? "Good morning." : (hr < 18) ? "Good afternoon." : "Good evening.";
 
-        // NEW: Render Monthly Bar Charts
+        // NEW: Auto-download Covered Equities CSV
+        async function downloadCoveredEquities() {
+            const btn = document.getElementById('covered-btn-text');
+            btn.innerText = "Exporting...";
+            try {
+                const res = await fetch(`${RENDER_BACKEND_URL}/api/covered-assets`);
+                const data = await res.json();
+                if (!data.assets || data.assets.length === 0) throw new Error("No assets available");
+
+                const headers = ["Ticker", "Sector Profile", "Market Cap (₹ Cr)", "Altman Zone", "Altman Score", "DuPont ROE (%)", "Piotroski F-Score", "EVA Status"];
+                const rows = data.assets.map(a => [
+                    `"${a.ticker}"`,
+                    `"${a.sector}"`,
+                    a.market_cap_cr,
+                    `"${a.altman_zone}"`,
+                    `"${a.altman_score}"`,
+                    `"${a.roe}"`,
+                    a.piotroski_f,
+                    `"${a.eva_status}"`
+                ]);
+
+                const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `MLFP_Covered_Assets_${data.count}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                btn.innerText = `Covered Equities (${data.count})`;
+            } catch (err) {
+                alert("Failed to export covered assets: " + err.message);
+                btn.innerText = "Covered Equities (59)";
+            }
+        }
+
         async function fetchMarketOverview() {
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/market-overview`);
@@ -432,8 +515,6 @@
                 data.overview.forEach((idxData, i) => {
                     if(idxData.bar_data && idxData.bar_data.length > 0) {
                         const ctx = document.getElementById(`bar-chart-${i}`).getContext('2d');
-                        
-                        // Map colors: Green if > 0, Red if < 0
                         const barColors = idxData.bar_data.map(val => val >= 0 ? '#38a169' : '#e53e3e');
 
                         new Chart(ctx, {
@@ -543,11 +624,11 @@
         function startLoadingSequence() {
             const loadTexts = [
                 `Connecting to Upstox for ${activeTicker}...`, 
-                "Running Multi-Tier Data Waterfall (YFinance -> Jugaad -> AI)...",
-                "Computing Quarterly & 1-Year Extrapolations...",
-                "Running Forensic Audits & DuPont Engines...",
-                "Deploying LightGBM Classifiers...",
-                "Querying Gemini AI for Catalyst Sentiment..."
+                "Running Multi-Tier Data Waterfall...",
+                "Computing Forward Log-Drift Extrapolations...",
+                "Querying Institutional Master Database...",
+                "Deploying LightGBM / XGBoost Classifiers...",
+                "Querying Gemini AI Interactions Engine..."
             ];
             let i = 0;
             const textEl = document.getElementById('loading-text-dynamic');
@@ -566,6 +647,7 @@
             }, 900);
         }
 
+        // SIMPLIFIED, INTUITIVE TRADE SETUP
         function calculateTradeSetup() {
             if (!latestData || !latestData.trade_setup) return;
             const riskCap = parseFloat(document.getElementById('risk-input').value);
@@ -575,37 +657,44 @@
             const atr = latestData.trade_setup.atr_value;
             const signal = latestData.quant_signal;
             
-            let sl_price, tp_price, risk_per_share, qty, direction;
+            const activeContainer = document.getElementById('trade-active-container');
+            const neutralContainer = document.getElementById('trade-neutral-container');
 
             if (signal.includes("BULLISH")) {
-                sl_price = price - (2 * atr);
-                tp_price = price + (4 * atr);
-                risk_per_share = price - sl_price;
-                direction = "BUY / LONG";
+                activeContainer.classList.remove('hidden');
+                neutralContainer.classList.add('hidden');
+
+                const sl_price = price - (2.0 * atr);
+                const tp_price = price + (4.0 * atr);
+                const risk_per_share = price - sl_price;
+                const qty = risk_per_share > 0 ? Math.floor(riskCap / risk_per_share) : 0;
+
+                document.getElementById('trade-qty').innerText = qty;
+                document.getElementById('trade-direction').innerText = "BUY / LONG";
+                document.getElementById('trade-direction').className = "text-[10px] font-semibold mt-1 text-emerald-600";
+                document.getElementById('trade-sl').innerText = `₹${sl_price.toFixed(2)}`;
+                document.getElementById('trade-tp').innerText = `₹${tp_price.toFixed(2)}`;
             } else if (signal.includes("BEARISH")) {
-                sl_price = price + (2 * atr);
-                tp_price = price - (4 * atr);
-                risk_per_share = sl_price - price;
-                direction = "SELL / SHORT";
-            } else {
-                sl_price = price;
-                tp_price = price;
-                risk_per_share = 0;
-                direction = "NO TRADE ZONE";
-            }
+                activeContainer.classList.remove('hidden');
+                neutralContainer.classList.add('hidden');
 
-            if (risk_per_share > 0) {
-                qty = Math.floor(riskCap / risk_per_share);
-            } else {
-                qty = 0;
-            }
+                const sl_price = price + (2.0 * atr);
+                const tp_price = price - (4.0 * atr);
+                const risk_per_share = sl_price - price;
+                const qty = risk_per_share > 0 ? Math.floor(riskCap / risk_per_share) : 0;
 
-            document.getElementById('trade-qty').innerText = qty;
-            document.getElementById('trade-direction').innerText = direction;
-            document.getElementById('trade-direction').className = direction.includes("BUY") ? "text-[10px] font-semibold mt-1 text-emerald-600" : (direction.includes("SELL") ? "text-[10px] font-semibold mt-1 text-rose-500" : "text-[10px] font-semibold mt-1 text-muted");
-            
-            document.getElementById('trade-sl').innerText = `₹${sl_price.toFixed(2)}`;
-            document.getElementById('trade-tp').innerText = `₹${tp_price.toFixed(2)}`;
+                document.getElementById('trade-qty').innerText = qty;
+                document.getElementById('trade-direction').innerText = "SELL / SHORT";
+                document.getElementById('trade-direction').className = "text-[10px] font-semibold mt-1 text-rose-500";
+                document.getElementById('trade-sl').innerText = `₹${sl_price.toFixed(2)}`;
+                document.getElementById('trade-tp').innerText = `₹${tp_price.toFixed(2)}`;
+            } else {
+                // NEUTRAL CONSOLIDATION
+                activeContainer.classList.add('hidden');
+                neutralContainer.classList.remove('hidden');
+                document.getElementById('neutral-breakout-up').innerText = `₹${(price + 2.0 * atr).toFixed(2)}`;
+                document.getElementById('neutral-breakout-down').innerText = `₹${(price - 2.0 * atr).toFixed(2)}`;
+            }
         }
 
         async function executeAnalysis() {
@@ -677,26 +766,16 @@
 
                         if (data.fundamentals) {
                             const f = data.fundamentals;
-                            if (f.sector_profile) {
-                                let badgeText = "Audited Data Feed";
-                                if (f.sector_profile.includes("Tier 2") || f.sector_profile.includes("Jugaad")) badgeText = "Jugaad Fallback";
-                                else if (f.sector_profile.includes("Tier 3") || f.sector_profile.includes("Tier 5") || f.sector_profile.includes("AI")) badgeText = "AI Agent Recovery";
-                                else if (f.sector_profile.includes("Timeout") || f.sector_profile.includes("Error") || f.sector_profile.includes("Fail")) badgeText = "Data Blocked";
-                                document.getElementById('fund-source-badge').innerText = badgeText;
-                            }
-
                             document.getElementById('fund-z-score').innerText = f.altman_z.score;
                             const zBadge = document.getElementById('fund-z-badge');
                             zBadge.innerText = f.altman_z.zone;
-                            zBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.altman_z.status === 'green' ? 'text-emerald-600' : (f.altman_z.status === 'yellow' ? 'text-amber-600' : (f.altman_z.status === 'grey' ? 'text-gray-500' : 'text-rose-500'))}`;
+                            zBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.altman_z.status === 'green' ? 'text-emerald-600' : (f.altman_z.status === 'yellow' ? 'text-amber-600' : 'text-rose-500')}`;
                             document.getElementById('fund-z-desc').innerText = f.altman_z.desc;
                             
                             if (f.altman_z.zone.includes("Safe") || f.altman_z.zone.includes("Exempt")) {
                                 document.getElementById('fund-z-verdict').innerText = "Strong Solvency";
                             } else if (f.altman_z.zone.includes("Grey")) {
                                 document.getElementById('fund-z-verdict').innerText = "Moderate Solvency";
-                            } else if (f.altman_z.zone.includes("Blocked") || f.altman_z.zone.includes("Missing")) {
-                                document.getElementById('fund-z-verdict').innerText = "Data Unavailable";
                             } else {
                                 document.getElementById('fund-z-verdict').innerText = "Distressed";
                             }
@@ -710,7 +789,7 @@
                             document.getElementById('fund-eva-score').innerText = `₹${f.eva.eva_cr} Cr`;
                             const evaBadge = document.getElementById('fund-eva-badge');
                             evaBadge.innerText = f.eva.status;
-                            evaBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.eva.status === 'Value Creator' ? 'text-emerald-600' : (f.eva.status === 'Error' ? 'text-gray-500' : 'text-rose-500')}`;
+                            evaBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.eva.status === 'Value Creator' ? 'text-emerald-600' : (f.eva.status === 'Exempt' ? 'text-indigo-600' : 'text-rose-500')}`;
                             document.getElementById('fund-eva-nopat').innerText = `₹${f.eva.nopat_cr} Cr`;
                             document.getElementById('fund-eva-wacc').innerText = `${f.eva.wacc_pct}%`;
                             document.getElementById('fund-eva-verdict').innerText = f.eva.verdict;
@@ -719,15 +798,36 @@
                                 document.getElementById('fund-f-score').innerText = `${f.forensics.piotroski_f.score} / 9`;
                                 const fBadge = document.getElementById('fund-f-badge');
                                 fBadge.innerText = f.forensics.piotroski_f.status;
-                                fBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.piotroski_f.badge === 'green' ? 'text-emerald-600' : (f.forensics.piotroski_f.badge === 'yellow' ? 'text-amber-600' : (f.forensics.piotroski_f.badge === 'grey' ? 'text-gray-500' : 'text-rose-500'))}`;
+                                fBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.piotroski_f.badge === 'green' ? 'text-emerald-600' : (f.forensics.piotroski_f.badge === 'yellow' ? 'text-amber-600' : 'text-rose-500')}`;
                                 document.getElementById('fund-f-desc').innerText = f.forensics.piotroski_f.desc;
 
                                 document.getElementById('fund-m-score').innerText = f.forensics.beneish_m.score;
                                 const mBadge = document.getElementById('fund-m-badge');
                                 mBadge.innerText = f.forensics.beneish_m.verdict;
-                                mBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.beneish_m.badge === 'green' ? 'text-emerald-600' : (f.forensics.beneish_m.badge === 'grey' ? 'text-gray-500' : 'text-rose-500')}`;
+                                mBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.forensics.beneish_m.badge === 'green' ? 'text-emerald-600' : 'text-rose-500'}`;
                                 document.getElementById('fund-m-desc').innerText = f.forensics.beneish_m.desc;
                             }
+                        }
+
+                        // POPULATE PEERS TABLE
+                        const peerTbody = document.getElementById('peer-table-body');
+                        peerTbody.innerHTML = '';
+                        if (data.peers && data.peers.length > 0) {
+                            data.peers.forEach(p => {
+                                const badgeCol = p.badge === 'green' ? 'text-emerald-600' : (p.badge === 'yellow' ? 'text-amber-600' : 'text-rose-500');
+                                peerTbody.innerHTML += `
+                                    <tr class="border-b border-gray-200 hover:bg-white/40 transition-colors">
+                                        <td class="py-3 px-2 font-bold text-accent cursor-pointer" onclick="selectTicker('${p.ticker}'); executeAnalysis();">${p.ticker} ↗</td>
+                                        <td class="py-3 px-2 text-dark font-medium">${p.sector}</td>
+                                        <td class="py-3 px-2 font-semibold">₹${p.market_cap_cr}</td>
+                                        <td class="py-3 px-2 font-bold text-dark">${p.roe}%</td>
+                                        <td class="py-3 px-2 font-semibold">${p.altman_score}</td>
+                                        <td class="py-3 px-2 text-right"><span class="font-bold ${badgeCol}">${p.zone}</span></td>
+                                    </tr>
+                                `;
+                            });
+                        } else {
+                            peerTbody.innerHTML = `<tr><td colspan="6" class="py-3 text-center text-muted">No direct peers found.</td></tr>`;
                         }
 
                         if (data.quarterly_forecast) {
