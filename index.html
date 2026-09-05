@@ -85,7 +85,7 @@
             <div class="relative w-full md:w-2/3">
                 <div class="flex items-center neo-pressed px-5 py-4">
                     <svg class="w-5 h-5 text-muted mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" id="search-input" class="w-full bg-transparent outline-none text-dark font-medium placeholder-muted" placeholder="Search institutional stocks (e.g. RELIANCE, TCS, AAPL, MSFT)..." autocomplete="off" oninput="debounceSearch(this.value)">
+                    <input type="text" id="search-input" class="w-full bg-transparent outline-none text-dark font-medium placeholder-muted" placeholder="Search any stock (e.g. RELIANCE, TCS, TSLA, AAPL, MSFT)..." autocomplete="off" oninput="debounceSearch(this.value)">
                 </div>
                 <div id="search-dropdown" class="absolute w-full mt-3 neo-flat hidden max-h-64 overflow-y-auto overflow-x-hidden border border-[#ffffff33]"></div>
             </div>
@@ -95,7 +95,7 @@
         <div class="fade-in-up delay-1">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xs uppercase tracking-widest text-muted font-semibold">Live Watchlist & LTP</h3>
-                <span class="text-[11px] text-muted flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Live Upstox Quotes</span>
+                <span class="text-[11px] text-muted flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Live Market Quotes</span>
             </div>
             <div id="scanner-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div class="neo-pressed h-16 flex items-center justify-center text-sm text-muted animate-pulse col-span-full">
@@ -149,7 +149,7 @@
             </div>
         </div>
 
-        <!-- Dashboard View (PDF Target Container) -->
+        <!-- Dashboard View -->
         <div id="dashboard-view" class="hidden space-y-8 fade-in-up">
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -174,7 +174,7 @@
                             <span class="text-xs uppercase tracking-widest text-muted font-semibold">Target Asset</span>
                             <h2 id="disp-ticker" class="text-4xl font-extrabold text-dark mt-1">---</h2>
                             <div class="flex items-center gap-2 mt-2">
-                                <span id="disp-live-price" class="text-2xl font-bold text-accent">₹---</span>
+                                <span id="disp-live-price" class="text-2xl font-bold text-accent">---</span>
                                 <span id="disp-live-change" class="text-xs font-semibold text-muted">(--)</span>
                             </div>
                             <div class="flex items-center gap-2 mt-3">
@@ -218,37 +218,65 @@
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
             </div>
 
-            <!-- NEW: ADVANCED SWING TRADING & MOMENTUM SETUP -->
-            <div class="neo-flat p-8 space-y-4">
-                <div class="flex justify-between items-center border-b border-gray-300 pb-3">
+            <!-- ADVANCED SWING TRADING ENGINE & INTERACTIVE OSCILLATOR -->
+            <div class="neo-flat p-8 space-y-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-300 pb-3 gap-2">
                     <div>
-                        <h3 class="text-lg font-bold text-dark">Advanced Swing Trading & Momentum Setup</h3>
-                        <p class="text-xs text-muted">Technical oscillators and mean-reversion metrics for swing execution.</p>
+                        <h3 class="text-lg font-bold text-dark">Advanced Swing Trading & Momentum Engine</h3>
+                        <p class="text-xs text-muted">14-Day RSI Oscillator, MACD Divergence & Mean Reversion Gauges</p>
                     </div>
-                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Swing Module</span>
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Swing Strategy</span>
+                </div>
+
+                <!-- Plain-English Swing Strategy Verdict Banner -->
+                <div id="swing-verdict-banner" class="neo-pressed p-5 rounded-2xl border-l-4 border-accent">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span id="swing-verdict-dot" class="w-2.5 h-2.5 rounded-full bg-accent"></span>
+                        <h4 id="swing-verdict-title" class="text-sm font-bold uppercase tracking-wider text-dark">Evaluating Momentum Cycle...</h4>
+                    </div>
+                    <p id="swing-verdict-text" class="text-xs text-muted leading-relaxed">Analyzing trend divergence...</p>
                 </div>
                 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-4">
-                    <div class="neo-pressed p-5 text-center flex flex-col justify-center rounded-2xl">
-                        <span class="text-[10px] uppercase font-bold text-muted mb-1">RSI (14)</span>
+                <!-- 4 Swing Gauges -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="neo-pressed p-4 text-center rounded-2xl flex flex-col justify-between">
+                        <span class="text-[10px] uppercase font-bold text-muted mb-1">RSI (14-Period)</span>
                         <span id="swing-rsi" class="text-2xl font-bold text-dark">--</span>
-                        <span id="swing-rsi-desc" class="text-[10px] mt-1 font-semibold">--</span>
+                        <div class="w-full bg-gray-200 h-1.5 rounded-full my-2 overflow-hidden">
+                            <div id="swing-rsi-bar" class="h-full bg-accent w-0 transition-all duration-500"></div>
+                        </div>
+                        <span id="swing-rsi-desc" class="text-[10px] font-semibold">--</span>
                     </div>
-                    <div class="neo-pressed p-5 text-center flex flex-col justify-center rounded-2xl">
-                        <span class="text-[10px] uppercase font-bold text-muted mb-1">MACD Histogram</span>
+
+                    <div class="neo-pressed p-4 text-center rounded-2xl flex flex-col justify-between">
+                        <span class="text-[10px] uppercase font-bold text-muted mb-1">MACD Momentum</span>
                         <span id="swing-macd" class="text-2xl font-bold text-dark">--</span>
-                        <span id="swing-macd-desc" class="text-[10px] mt-1 font-semibold">--</span>
+                        <span id="swing-macd-desc" class="text-[10px] mt-2 font-semibold">--</span>
                     </div>
-                    <div class="neo-pressed p-5 text-center flex flex-col justify-center rounded-2xl">
-                        <span class="text-[10px] uppercase font-bold text-muted mb-1">Dist from 20-SMA</span>
+
+                    <div class="neo-pressed p-4 text-center rounded-2xl flex flex-col justify-between">
+                        <span class="text-[10px] uppercase font-bold text-muted mb-1">20-SMA Stretch</span>
                         <span id="swing-sma" class="text-2xl font-bold text-dark">--</span>
-                        <span id="swing-sma-desc" class="text-[10px] mt-1 font-semibold">--</span>
+                        <span id="swing-sma-desc" class="text-[10px] mt-2 font-semibold">--</span>
                     </div>
-                    <div class="neo-pressed p-5 text-center flex flex-col justify-center rounded-2xl">
+
+                    <div class="neo-pressed p-4 text-center rounded-2xl flex flex-col justify-between">
                         <span class="text-[10px] uppercase font-bold text-muted mb-1">Trailing Volatility</span>
                         <span id="swing-atr" class="text-2xl font-bold text-dark">--</span>
-                        <span class="text-[10px] text-muted mt-1 font-semibold">ATR / Price %</span>
+                        <span class="text-[10px] text-muted mt-2 font-semibold">ATR / Price %</span>
                     </div>
+                </div>
+
+                <!-- Swing Visual Chart: RSI with 70/30 Bands -->
+                <div class="neo-pressed p-4 rounded-2xl">
+                    <div class="flex justify-between items-center mb-2 px-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-muted">60-Day RSI Momentum Oscillator</span>
+                        <div class="flex gap-4 text-[10px] font-semibold">
+                            <span class="text-rose-500">Overbought Zone (>70)</span>
+                            <span class="text-emerald-600">Oversold Zone (<30)</span>
+                        </div>
+                    </div>
+                    <div class="h-44 w-full relative"><canvas id="swingRsiChart"></canvas></div>
                 </div>
             </div>
 
@@ -263,7 +291,6 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
-                    <!-- Capital Input -->
                     <div class="neo-pressed p-5 rounded-2xl col-span-1">
                         <label class="block text-[11px] font-bold uppercase tracking-widest text-muted mb-2">Max Capital Risk</label>
                         <div class="flex items-center text-xl font-bold text-dark border-b-2 border-accent pb-1">
@@ -273,7 +300,6 @@
                         <p class="text-[10px] text-muted mt-2">Maximum tolerated loss if Stop Loss is hit.</p>
                     </div>
 
-                    <!-- Dynamic Output Containers -->
                     <div id="trade-active-container" class="col-span-3 grid grid-cols-3 gap-4">
                         <div class="neo-flat p-5 text-center flex flex-col justify-center rounded-2xl">
                             <span class="text-[10px] uppercase font-bold text-muted mb-1">Recommended Shares</span>
@@ -292,7 +318,6 @@
                         </div>
                     </div>
 
-                    <!-- Neutral Standby Container -->
                     <div id="trade-neutral-container" class="hidden col-span-3 neo-pressed p-6 rounded-2xl flex flex-col justify-center">
                         <div class="flex items-center gap-3 mb-2">
                             <span class="w-3 h-3 rounded-full bg-amber-500"></span>
@@ -439,7 +464,7 @@
                             <tr class="text-muted border-b border-gray-300 uppercase tracking-wider text-[10px]">
                                 <th class="py-3 px-2">Ticker</th>
                                 <th class="py-3 px-2">Sector Profile</th>
-                                <th class="py-3 px-2">Market Cap (Cr)</th>
+                                <th class="py-3 px-2">Market Cap</th>
                                 <th class="py-3 px-2">DuPont ROE</th>
                                 <th class="py-3 px-2">Altman Z-Score</th>
                                 <th class="py-3 px-2 text-right">Solvency Zone</th>
@@ -467,18 +492,17 @@
             </div>
         </div>
 
-        <!-- NEW: ADVANCED MULTI-ASSET PORTFOLIO BASKET -->
+        <!-- MULTI-ASSET PORTFOLIO BASKET & CORRELATION MATRIX -->
         <div class="fade-in-up delay-2 neo-flat p-8 space-y-6 mt-8">
             <div class="flex justify-between items-center border-b border-gray-300 pb-3">
                 <div>
                     <h3 class="text-lg font-bold text-dark">Advanced Multi-Asset Portfolio Basket</h3>
-                    <p class="text-xs text-muted">Inverse-Volatility Optimized & Correlation Heatmap</p>
+                    <p class="text-xs text-muted">Inverse-Volatility Optimized Allocations & 1-Year Correlation Matrix</p>
                 </div>
                 <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-emerald-600">Risk Parity Model</span>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                <!-- Basket Weights -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
@@ -494,7 +518,6 @@
                     </table>
                 </div>
 
-                <!-- Correlation Matrix -->
                 <div class="overflow-x-auto">
                     <p class="text-[10px] uppercase font-bold text-muted mb-3">1-Year Asset Correlation Matrix</p>
                     <div id="correlation-matrix" class="w-full">
@@ -514,10 +537,11 @@
         let pnlChartInstance = null;
         let candleChartInstance = null;
         let forecastChartInstance = null;
+        let swingRsiChartInstance = null;
         let candleSeries = null;
         let loaderInterval = null;
         let searchTimeout = null;
-        let currentCurrencySym = '₹'; // Default currency
+        let currentCurrencySym = '₹';
 
         const hr = new Date().getHours();
         document.getElementById('human-greeting').innerText = (hr < 12) ? "Good morning." : (hr < 18) ? "Good afternoon." : "Good evening.";
@@ -530,16 +554,10 @@
                 const data = await res.json();
                 if (!data.assets || data.assets.length === 0) throw new Error("No assets available");
 
-                const headers = ["Ticker", "Sector Profile", "Market Cap (₹ Cr)", "Altman Zone", "Altman Score", "DuPont ROE (%)", "Piotroski F-Score", "EVA Status"];
+                const headers = ["Ticker", "Sector Profile", "Market Cap", "Altman Zone", "Altman Score", "DuPont ROE (%)", "Piotroski F-Score", "EVA Status"];
                 const rows = data.assets.map(a => [
-                    `"${a.ticker}"`,
-                    `"${a.sector}"`,
-                    a.market_cap_cr,
-                    `"${a.altman_zone}"`,
-                    `"${a.altman_score}"`,
-                    `"${a.roe}"`,
-                    a.piotroski_f,
-                    `"${a.eva_status}"`
+                    `"${a.ticker}"`, `"${a.sector}"`, a.market_cap_cr, `"${a.altman_zone}"`,
+                    `"${a.altman_score}"`, `"${a.roe}"`, a.piotroski_f, `"${a.eva_status}"`
                 ]);
 
                 const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
@@ -599,21 +617,9 @@
                                 }]
                             },
                             options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: { 
-                                    legend: { display: false }, 
-                                    tooltip: { enabled: true, callbacks: { label: function(context) { return context.raw + '%'; } } } 
-                                },
-                                scales: { 
-                                    x: { 
-                                        display: true, 
-                                        grid: { display: false }, 
-                                        border: { display: false },
-                                        ticks: { font: { size: 9, family: 'Poppins' }, color: '#788293' }
-                                    }, 
-                                    y: { display: false } 
-                                },
+                                responsive: true, maintainAspectRatio: false,
+                                plugins: { legend: { display: false }, tooltip: { enabled: true, callbacks: { label: c => c.raw + '%' } } },
+                                scales: { x: { display: true, grid: { display: false }, border: { display: false }, ticks: { font: { size: 9, family: 'Poppins' }, color: '#788293' } }, y: { display: false } },
                                 layout: { padding: 0 },
                                 animation: { duration: 1500, easing: 'easeOutQuart' }
                             }
@@ -625,7 +631,6 @@
             }
         }
 
-        // NEW: Fetch Portfolio Optimization Basket
         async function fetchPortfolioBasket() {
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/portfolio-basket`);
@@ -657,7 +662,6 @@
                         else if (val > 0.6) { bg = 'bg-rose-100'; tc = 'text-rose-700'; }
                         else if (val < 0.3) { bg = 'bg-emerald-100'; tc = 'text-emerald-700'; }
                         else { bg = 'bg-amber-100'; tc = 'text-amber-700'; }
-                        
                         html += `<td class="py-2 border border-white ${bg} ${tc} font-semibold">${val}</td>`;
                     });
                     html += '</tr>';
@@ -741,7 +745,7 @@
                 "Computing Forward Log-Drift Extrapolations...",
                 "Querying Institutional Master Database...",
                 "Deploying LightGBM / XGBoost Classifiers...",
-                "Querying Gemini AI Interactions Engine..."
+                "Generating Swing Indicators..."
             ];
             let i = 0;
             const textEl = document.getElementById('loading-text-dynamic');
@@ -806,6 +810,65 @@
                 document.getElementById('neutral-breakout-up').innerText = `${currentCurrencySym}${(price + 2.0 * atr).toFixed(2)}`;
                 document.getElementById('neutral-breakout-down').innerText = `${currentCurrencySym}${(price - 2.0 * atr).toFixed(2)}`;
             }
+        }
+
+        function renderSwingOscillator(sc) {
+            const ctx = document.getElementById('swingRsiChart').getContext('2d');
+            if (swingRsiChartInstance) swingRsiChartInstance.destroy();
+
+            swingRsiChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sc.dates,
+                    datasets: [
+                        {
+                            label: 'RSI (14)',
+                            data: sc.rsi,
+                            borderColor: '#5a81fa',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.2,
+                            fill: false
+                        },
+                        {
+                            label: 'Overbought (70)',
+                            data: Array(sc.dates.length).fill(70),
+                            borderColor: 'rgba(239, 68, 68, 0.4)',
+                            borderDash: [4, 4],
+                            borderWidth: 1.5,
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: 'Oversold (30)',
+                            data: Array(sc.dates.length).fill(30),
+                            borderColor: 'rgba(34, 197, 94, 0.4)',
+                            borderDash: [4, 4],
+                            borderWidth: 1.5,
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: { display: false },
+                        y: {
+                            min: 15,
+                            max: 85,
+                            ticks: { color: '#788293', stepSize: 20 },
+                            grid: { color: 'rgba(0,0,0,0.03)' }
+                        }
+                    },
+                    animation: { duration: 1200, easing: 'easeOutQuart' }
+                }
+            });
         }
 
         async function executeAnalysis() {
@@ -878,44 +941,94 @@
                         document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
                         document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
 
-                        // NEW: Populate Swing Metrics
+                        // Populate Swing Trading Gauges & Plain-English Verdict
                         if (data.swing_metrics) {
                             const sm = data.swing_metrics;
-                            
                             const rsiEl = document.getElementById('swing-rsi');
                             const rsiDesc = document.getElementById('swing-rsi-desc');
+                            const rsiBar = document.getElementById('swing-rsi-bar');
+                            
                             rsiEl.innerText = sm.rsi_14;
-                            if (sm.rsi_14 > 70) { rsiEl.className = "text-2xl font-bold text-rose-500"; rsiDesc.innerText = "Overbought (Risk)"; rsiDesc.className = "text-[10px] mt-1 font-semibold text-rose-500"; }
-                            else if (sm.rsi_14 < 30) { rsiEl.className = "text-2xl font-bold text-emerald-600"; rsiDesc.innerText = "Oversold (Value)"; rsiDesc.className = "text-[10px] mt-1 font-semibold text-emerald-600"; }
-                            else { rsiEl.className = "text-2xl font-bold text-dark"; rsiDesc.innerText = "Neutral Momentum"; rsiDesc.className = "text-[10px] mt-1 font-semibold text-muted"; }
+                            rsiBar.style.width = `${Math.min(Math.max(sm.rsi_14, 0), 100)}%`;
+
+                            let verdictTitle = "Consolidation Range";
+                            let verdictText = "RSI momentum and moving average deviation indicate the asset is trading within a normal distribution band. No aggressive swing trigger.";
+                            let verdictColor = "border-accent";
+                            let dotBg = "bg-accent";
+
+                            if (sm.rsi_14 > 70) {
+                                rsiEl.className = "text-2xl font-bold text-rose-500";
+                                rsiDesc.innerText = "Overbought (High Pullback Risk)";
+                                rsiDesc.className = "text-[10px] font-semibold text-rose-500";
+                                rsiBar.className = "h-full bg-rose-500 transition-all duration-500";
+                                verdictTitle = "Overbought Warning: Awaiting Pullback";
+                                verdictText = "Momentum is stretched into the upper danger zone (>70). Entering long here carries adverse risk-to-reward. Await an RSI pullback toward the 45-50 zone.";
+                                verdictColor = "border-rose-500";
+                                dotBg = "bg-rose-500";
+                            } else if (sm.rsi_14 < 35) {
+                                rsiEl.className = "text-2xl font-bold text-emerald-600";
+                                rsiDesc.innerText = "Oversold (Mean Reversion Bounce)";
+                                rsiDesc.className = "text-[10px] font-semibold text-emerald-600";
+                                rsiBar.className = "h-full bg-emerald-500 transition-all duration-500";
+                                verdictTitle = "Mean Reversion Opportunity: Oversold";
+                                verdictText = "Asset is deeply oversold with sellers exhausting momentum. Favorable probability for a 3-5 day swing bounce back toward the 20-day SMA baseline.";
+                                verdictColor = "border-emerald-500";
+                                dotBg = "bg-emerald-500";
+                            } else {
+                                rsiEl.className = "text-2xl font-bold text-dark";
+                                rsiDesc.innerText = "Neutral Momentum (35-70)";
+                                rsiDesc.className = "text-[10px] font-semibold text-muted";
+                                rsiBar.className = "h-full bg-accent transition-all duration-500";
+                            }
+
+                            document.getElementById('swing-verdict-banner').className = `neo-pressed p-5 rounded-2xl border-l-4 ${verdictColor}`;
+                            document.getElementById('swing-verdict-title').innerText = verdictTitle;
+                            document.getElementById('swing-verdict-text').innerText = verdictText;
+                            document.getElementById('swing-verdict-dot').className = `w-2.5 h-2.5 rounded-full ${dotBg}`;
 
                             const macdEl = document.getElementById('swing-macd');
                             const macdDesc = document.getElementById('swing-macd-desc');
                             macdEl.innerText = sm.macd_hist;
-                            if (sm.macd_hist > 0) { macdEl.className = "text-2xl font-bold text-emerald-600"; macdDesc.innerText = "Bullish Divergence"; macdDesc.className = "text-[10px] mt-1 font-semibold text-emerald-600"; }
-                            else { macdEl.className = "text-2xl font-bold text-rose-500"; macdDesc.innerText = "Bearish Convergence"; macdDesc.className = "text-[10px] mt-1 font-semibold text-rose-500"; }
+                            if (sm.macd_hist > 0) {
+                                macdEl.className = "text-2xl font-bold text-emerald-600";
+                                macdDesc.innerText = "Positive Divergence";
+                                macdDesc.className = "text-[10px] font-semibold text-emerald-600";
+                            } else {
+                                macdEl.className = "text-2xl font-bold text-rose-500";
+                                macdDesc.innerText = "Negative Divergence";
+                                macdDesc.className = "text-[10px] font-semibold text-rose-500";
+                            }
 
                             const smaEl = document.getElementById('swing-sma');
                             const smaDesc = document.getElementById('swing-sma-desc');
                             smaEl.innerText = `${sm.sma_dist_pct}%`;
-                            if (sm.sma_dist_pct > 5) { smaEl.className = "text-2xl font-bold text-rose-500"; smaDesc.innerText = "Overextended (High)"; smaDesc.className = "text-[10px] mt-1 font-semibold text-rose-500"; }
-                            else if (sm.sma_dist_pct < -5) { smaEl.className = "text-2xl font-bold text-emerald-600"; smaDesc.innerText = "Mean Reversion (Low)"; smaDesc.className = "text-[10px] mt-1 font-semibold text-emerald-600"; }
-                            else { smaEl.className = "text-2xl font-bold text-dark"; smaDesc.innerText = "At Trend Baseline"; smaDesc.className = "text-[10px] mt-1 font-semibold text-muted"; }
+                            if (sm.sma_dist_pct > 5) {
+                                smaEl.className = "text-2xl font-bold text-rose-500";
+                                smaDesc.innerText = "Extended Above Mean";
+                                smaDesc.className = "text-[10px] font-semibold text-rose-500";
+                            } else if (sm.sma_dist_pct < -5) {
+                                smaEl.className = "text-2xl font-bold text-emerald-600";
+                                smaDesc.innerText = "Discount to Mean";
+                                smaDesc.className = "text-[10px] font-semibold text-emerald-600";
+                            } else {
+                                smaEl.className = "text-2xl font-bold text-dark";
+                                smaDesc.innerText = "At Trend Baseline";
+                                smaDesc.className = "text-[10px] font-semibold text-muted";
+                            }
 
                             document.getElementById('swing-atr').innerText = `${sm.atr_pct}%`;
                         }
 
+                        if (data.swing_chart) {
+                            renderSwingOscillator(data.swing_chart);
+                        }
+
+                        // Fundamentals Panel
                         if (data.fundamentals) {
                             const f = data.fundamentals;
-                            
-                            let badgeText = "Audited Data Feed";
-                            if (f.sector_profile.includes("AI Fallback Estimate")) {
-                                badgeText = "AI Estimated Data";
-                                document.getElementById('fund-source-badge').className = "px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-amber-500";
-                            } else {
-                                document.getElementById('fund-source-badge').className = "px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent";
-                            }
-                            document.getElementById('fund-source-badge').innerText = badgeText;
+                            const badge = document.getElementById('fund-source-badge');
+                            badge.innerText = data.source_status || "Audited Data Feed";
+                            badge.className = data.source_status === "Live SEC/Exchange Feed" ? "px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-emerald-600" : (data.source_status === "AI Forensic Estimate" ? "px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-amber-500" : "px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent");
                             
                             document.getElementById('fund-z-score').innerText = f.altman_z.score;
                             const zBadge = document.getElementById('fund-z-badge');
@@ -937,11 +1050,12 @@
                             document.getElementById('fund-dupont-leverage').innerText = f.dupont.financial_leverage !== "N/A" ? `${f.dupont.financial_leverage}x` : "N/A";
                             document.getElementById('fund-dupont-verdict').innerText = f.dupont.verdict;
 
-                            document.getElementById('fund-eva-score').innerText = f.eva.eva_cr !== "N/A" ? `${currentCurrencySym}${f.eva.eva_cr} Cr` : "N/A";
+                            const evaUnit = data.is_us_stock ? "B" : "Cr";
+                            document.getElementById('fund-eva-score').innerText = f.eva.eva_cr !== "N/A" ? `${currentCurrencySym}${f.eva.eva_cr} ${evaUnit}` : "N/A";
                             const evaBadge = document.getElementById('fund-eva-badge');
                             evaBadge.innerText = f.eva.status;
                             evaBadge.className = `px-2.5 py-0.5 rounded-full text-xs font-bold neo-flat ${f.eva.status === 'Value Creator' ? 'text-emerald-600' : (f.eva.status === 'Exempt' ? 'text-indigo-600' : (f.eva.status === 'Pending' ? 'text-amber-500' : 'text-rose-500'))}`;
-                            document.getElementById('fund-eva-nopat').innerText = f.eva.nopat_cr !== "N/A" ? `${currentCurrencySym}${f.eva.nopat_cr} Cr` : "N/A";
+                            document.getElementById('fund-eva-nopat').innerText = f.eva.nopat_cr !== "N/A" ? `${currentCurrencySym}${f.eva.nopat_cr} ${evaUnit}` : "N/A";
                             document.getElementById('fund-eva-wacc').innerText = `${f.eva.wacc_pct}%`;
                             document.getElementById('fund-eva-verdict').innerText = f.eva.verdict;
 
@@ -1092,7 +1206,7 @@
 
         function copyTelemetryOutput() {
             if (!latestData) return alert("Run analysis first.");
-            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker} (${currentCurrencySym}${latestData.live_price})\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%\nAltman Z: ${latestData.fundamentals?.altman_z?.score || 'N/A'}\nPiotroski F: ${latestData.fundamentals?.forensics?.piotroski_f?.score || 'N/A'}/9\nBeneish M: ${latestData.fundamentals?.forensics?.beneish_m?.score || 'N/A'}\nEVA: ${currentCurrencySym}${latestData.fundamentals?.eva?.eva_cr || 'N/A'} Cr`;
+            const txt = `[NEOMORPHIC TERMINAL TELEMETRY]\nAsset: ${latestData.ticker} (${currentCurrencySym}${latestData.live_price})\nSignal: ${latestData.quant_signal} (${latestData.quant_probability}%)\nRegime: ${latestData.current_regime}\nAI Score: ${latestData.ai_sentiment_score}\nNet Filtered P&L: ${latestData.performance.filtered_strat_pct}%\nAltman Z: ${latestData.fundamentals?.altman_z?.score || 'N/A'}\nPiotroski F: ${latestData.fundamentals?.forensics?.piotroski_f?.score || 'N/A'}/9\nBeneish M: ${latestData.fundamentals?.forensics?.beneish_m?.score || 'N/A'}\nEVA: ${currentCurrencySym}${latestData.fundamentals?.eva?.eva_cr || 'N/A'}`;
             navigator.clipboard.writeText(txt);
             const btn = document.getElementById('copy-btn-text');
             btn.innerText = "Copied!";
