@@ -85,7 +85,7 @@
             <div class="relative w-full md:w-2/3">
                 <div class="flex items-center neo-pressed px-5 py-4">
                     <svg class="w-5 h-5 text-muted mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" id="search-input" class="w-full bg-transparent outline-none text-dark font-medium placeholder-muted" placeholder="Search institutional stocks (e.g. RELIANCE, TCS, AAPL, TSLA)..." autocomplete="off" oninput="debounceSearch(this.value)">
+                    <input type="text" id="search-input" class="w-full bg-transparent outline-none text-dark font-medium placeholder-muted" placeholder="Search institutional stocks (e.g. RELIANCE, TCS, AAPL, MSFT)..." autocomplete="off" oninput="debounceSearch(this.value)">
                 </div>
                 <div id="search-dropdown" class="absolute w-full mt-3 neo-flat hidden max-h-64 overflow-y-auto overflow-x-hidden border border-[#ffffff33]"></div>
             </div>
@@ -216,6 +216,40 @@
                     <span class="text-xs text-muted">Daily OHLC Bars</span>
                 </div>
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
+            </div>
+
+            <!-- NEW: ADVANCED SWING TRADING & MOMENTUM SETUP -->
+            <div class="neo-flat p-8 space-y-4">
+                <div class="flex justify-between items-center border-b border-gray-300 pb-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-dark">Advanced Swing Trading & Momentum Setup</h3>
+                        <p class="text-xs text-muted">Technical oscillators and mean-reversion metrics for swing execution.</p>
+                    </div>
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Swing Module</span>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-4">
+                    <div class="neo-pressed p-5 text-center flex flex-col justify-center rounded-2xl">
+                        <span class="text-[10px] uppercase font-bold text-muted mb-1">RSI (14)</span>
+                        <span id="swing-rsi" class="text-2xl font-bold text-dark">--</span>
+                        <span id="swing-rsi-desc" class="text-[10px] mt-1 font-semibold">--</span>
+                    </div>
+                    <div class="neo-pressed p-5 text-center flex flex-col justify-center rounded-2xl">
+                        <span class="text-[10px] uppercase font-bold text-muted mb-1">MACD Histogram</span>
+                        <span id="swing-macd" class="text-2xl font-bold text-dark">--</span>
+                        <span id="swing-macd-desc" class="text-[10px] mt-1 font-semibold">--</span>
+                    </div>
+                    <div class="neo-pressed p-5 text-center flex flex-col justify-center rounded-2xl">
+                        <span class="text-[10px] uppercase font-bold text-muted mb-1">Dist from 20-SMA</span>
+                        <span id="swing-sma" class="text-2xl font-bold text-dark">--</span>
+                        <span id="swing-sma-desc" class="text-[10px] mt-1 font-semibold">--</span>
+                    </div>
+                    <div class="neo-pressed p-5 text-center flex flex-col justify-center rounded-2xl">
+                        <span class="text-[10px] uppercase font-bold text-muted mb-1">Trailing Volatility</span>
+                        <span id="swing-atr" class="text-2xl font-bold text-dark">--</span>
+                        <span class="text-[10px] text-muted mt-1 font-semibold">ATR / Price %</span>
+                    </div>
+                </div>
             </div>
 
             <!-- ACTIONABLE RISK MANAGEMENT CARD -->
@@ -431,8 +465,45 @@
                 <div><p class="text-muted mb-1">Unfiltered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-unfilt-trades">0</span> / <span id="disp-diag-unfilt-frict" class="text-red-500">0%</span></p></div>
                 <div><p class="text-muted mb-1">Filtered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-filt-trades">0</span> / <span id="disp-diag-filt-frict" class="text-green-600">0%</span></p></div>
             </div>
-
         </div>
+
+        <!-- NEW: ADVANCED MULTI-ASSET PORTFOLIO BASKET -->
+        <div class="fade-in-up delay-2 neo-flat p-8 space-y-6 mt-8">
+            <div class="flex justify-between items-center border-b border-gray-300 pb-3">
+                <div>
+                    <h3 class="text-lg font-bold text-dark">Advanced Multi-Asset Portfolio Basket</h3>
+                    <p class="text-xs text-muted">Inverse-Volatility Optimized & Correlation Heatmap</p>
+                </div>
+                <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-emerald-600">Risk Parity Model</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <!-- Basket Weights -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="text-muted border-b border-gray-300 uppercase tracking-wider text-[10px]">
+                                <th class="py-3 px-2">Asset</th>
+                                <th class="py-3 px-2">Target Weight (%)</th>
+                                <th class="py-3 px-2">Annual Volatility</th>
+                            </tr>
+                        </thead>
+                        <tbody id="basket-table-body">
+                            <tr><td colspan="3" class="py-4 text-center text-muted animate-pulse">Calculating optimal weights...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Correlation Matrix -->
+                <div class="overflow-x-auto">
+                    <p class="text-[10px] uppercase font-bold text-muted mb-3">1-Year Asset Correlation Matrix</p>
+                    <div id="correlation-matrix" class="w-full">
+                        <div class="text-center text-muted text-xs py-4 animate-pulse">Computing matrix...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -554,8 +625,51 @@
             }
         }
 
+        // NEW: Fetch Portfolio Optimization Basket
+        async function fetchPortfolioBasket() {
+            try {
+                const res = await fetch(`${RENDER_BACKEND_URL}/api/portfolio-basket`);
+                const data = await res.json();
+                if (data.status !== "success") return;
+                
+                const tbody = document.getElementById('basket-table-body');
+                tbody.innerHTML = '';
+                data.assets.forEach(a => {
+                    tbody.innerHTML += `
+                        <tr class="border-b border-gray-200 hover:bg-white/40 transition-colors">
+                            <td class="py-3 px-2 font-bold text-dark">${a.ticker}</td>
+                            <td class="py-3 px-2 font-bold text-accent">${a.weight}%</td>
+                            <td class="py-3 px-2 text-muted">${a.volatility}%</td>
+                        </tr>
+                    `;
+                });
+                
+                const corrContainer = document.getElementById('correlation-matrix');
+                let html = '<table class="w-full text-center text-xs border-collapse"><thead><tr><th class="py-2"></th>';
+                data.labels.forEach(l => html += `<th class="py-2 text-muted uppercase font-semibold">${l.substring(0,4)}</th>`);
+                html += '</tr></thead><tbody>';
+                
+                data.correlation_matrix.forEach((row, i) => {
+                    html += `<tr><td class="py-2 font-bold text-left text-muted uppercase">${data.labels[i].substring(0,4)}</td>`;
+                    row.forEach(val => {
+                        let bg = 'bg-gray-100'; let tc = 'text-dark';
+                        if (val >= 0.99) { bg = 'bg-gray-300'; }
+                        else if (val > 0.6) { bg = 'bg-rose-100'; tc = 'text-rose-700'; }
+                        else if (val < 0.3) { bg = 'bg-emerald-100'; tc = 'text-emerald-700'; }
+                        else { bg = 'bg-amber-100'; tc = 'text-amber-700'; }
+                        
+                        html += `<td class="py-2 border border-white ${bg} ${tc} font-semibold">${val}</td>`;
+                    });
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+                corrContainer.innerHTML = html;
+            } catch(e) { console.error("Portfolio Basket Error: ", e); }
+        }
+
         window.onload = async () => {
             fetchMarketOverview();
+            fetchPortfolioBasket();
             
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/scanner`);
@@ -763,6 +877,33 @@
                         document.getElementById('disp-diag-unfilt-frict').innerText = `${data.diagnostics.unfiltered_friction_pct}%`;
                         document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
                         document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
+
+                        // NEW: Populate Swing Metrics
+                        if (data.swing_metrics) {
+                            const sm = data.swing_metrics;
+                            
+                            const rsiEl = document.getElementById('swing-rsi');
+                            const rsiDesc = document.getElementById('swing-rsi-desc');
+                            rsiEl.innerText = sm.rsi_14;
+                            if (sm.rsi_14 > 70) { rsiEl.className = "text-2xl font-bold text-rose-500"; rsiDesc.innerText = "Overbought (Risk)"; rsiDesc.className = "text-[10px] mt-1 font-semibold text-rose-500"; }
+                            else if (sm.rsi_14 < 30) { rsiEl.className = "text-2xl font-bold text-emerald-600"; rsiDesc.innerText = "Oversold (Value)"; rsiDesc.className = "text-[10px] mt-1 font-semibold text-emerald-600"; }
+                            else { rsiEl.className = "text-2xl font-bold text-dark"; rsiDesc.innerText = "Neutral Momentum"; rsiDesc.className = "text-[10px] mt-1 font-semibold text-muted"; }
+
+                            const macdEl = document.getElementById('swing-macd');
+                            const macdDesc = document.getElementById('swing-macd-desc');
+                            macdEl.innerText = sm.macd_hist;
+                            if (sm.macd_hist > 0) { macdEl.className = "text-2xl font-bold text-emerald-600"; macdDesc.innerText = "Bullish Divergence"; macdDesc.className = "text-[10px] mt-1 font-semibold text-emerald-600"; }
+                            else { macdEl.className = "text-2xl font-bold text-rose-500"; macdDesc.innerText = "Bearish Convergence"; macdDesc.className = "text-[10px] mt-1 font-semibold text-rose-500"; }
+
+                            const smaEl = document.getElementById('swing-sma');
+                            const smaDesc = document.getElementById('swing-sma-desc');
+                            smaEl.innerText = `${sm.sma_dist_pct}%`;
+                            if (sm.sma_dist_pct > 5) { smaEl.className = "text-2xl font-bold text-rose-500"; smaDesc.innerText = "Overextended (High)"; smaDesc.className = "text-[10px] mt-1 font-semibold text-rose-500"; }
+                            else if (sm.sma_dist_pct < -5) { smaEl.className = "text-2xl font-bold text-emerald-600"; smaDesc.innerText = "Mean Reversion (Low)"; smaDesc.className = "text-[10px] mt-1 font-semibold text-emerald-600"; }
+                            else { smaEl.className = "text-2xl font-bold text-dark"; smaDesc.innerText = "At Trend Baseline"; smaDesc.className = "text-[10px] mt-1 font-semibold text-muted"; }
+
+                            document.getElementById('swing-atr').innerText = `${sm.atr_pct}%`;
+                        }
 
                         if (data.fundamentals) {
                             const f = data.fundamentals;
