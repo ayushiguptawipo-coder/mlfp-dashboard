@@ -49,7 +49,13 @@
         #search-dropdown::-webkit-scrollbar-thumb { background: var(--shadow-dark); border-radius: 3px; }
     </style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="min-h-screen pt-16 md:pt-20 p-4 md:p-8">
+
+    <!-- FIXED TOP BANNER: Project Details (FIX 3) -->
+    <div class="fixed top-0 left-0 w-full z-[100] backdrop-blur-md bg-white/70 border-b border-gray-300 shadow-sm px-6 py-2.5 flex justify-between items-center text-[10px] md:text-xs">
+        <div class="tracking-widest uppercase text-accent font-bold">MLFP Project</div>
+        <div class="text-muted font-medium">Under the guidance of <span class="text-dark font-extrabold ml-1">Dr. Yedhu Harikumar.</span></div>
+    </div>
 
     <div class="bg-orb orb-1"></div>
     <div class="bg-orb orb-2"></div>
@@ -218,17 +224,17 @@
                 <div id="candleChartContainer" class="w-full h-80 rounded-2xl overflow-hidden neo-pressed p-2"></div>
             </div>
 
-            <!-- ADVANCED SWING TRADING ENGINE & INTERACTIVE OSCILLATOR -->
+            <!-- ADVANCED SWING TRADING ENGINE & 4-DAY TRAJECTORY FORECAST -->
             <div class="neo-flat p-8 space-y-6">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-300 pb-3 gap-2">
                     <div>
-                        <h3 class="text-lg font-bold text-dark">Advanced Swing Trading & Momentum Engine</h3>
-                        <p class="text-xs text-muted">14-Day RSI Oscillator, MACD Divergence & Mean Reversion Gauges</p>
+                        <h3 class="text-lg font-bold text-dark">Advanced Swing Trading & 4-Day Momentum Engine</h3>
+                        <p class="text-xs text-muted">RSI Divergence, 20-SMA Stretch & Forward Multi-Day Execution Targets</p>
                     </div>
                     <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-accent">Swing Strategy</span>
                 </div>
 
-                <!-- Plain-English Swing Strategy Verdict Banner -->
+                <!-- Plain-English Verdict Banner -->
                 <div id="swing-verdict-banner" class="neo-pressed p-5 rounded-2xl border-l-4 border-accent">
                     <div class="flex items-center gap-2 mb-1">
                         <span id="swing-verdict-dot" class="w-2.5 h-2.5 rounded-full bg-accent"></span>
@@ -264,6 +270,19 @@
                         <span class="text-[10px] uppercase font-bold text-muted mb-1">Trailing Volatility</span>
                         <span id="swing-atr" class="text-2xl font-bold text-dark">--</span>
                         <span class="text-[10px] text-muted mt-2 font-semibold">ATR / Price %</span>
+                    </div>
+                </div>
+
+                <!-- 4-Day Forward Swing Execution Targets & VISUAL CHART (FIX 1) -->
+                <div class="neo-pressed p-5 rounded-2xl">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-muted block mb-3">4-Day Forward Swing Trade Price Trajectory</span>
+                    
+                    <!-- NEW VISUAL CHART FOR 4-DAY SWING -->
+                    <div class="h-40 w-full relative mb-4"><canvas id="swing4DayChart"></canvas></div>
+
+                    <!-- Text Data Grid -->
+                    <div id="swing-forecast-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="text-center text-xs text-muted col-span-full">Awaiting analysis...</div>
                     </div>
                 </div>
 
@@ -448,12 +467,12 @@
                 </div>
             </div>
 
-            <!-- TOP 5 PEER COMPARISON PANEL -->
+            <!-- GRANULAR SECTOR PEER COMPARISON PANEL -->
             <div class="neo-flat p-8 space-y-4">
                 <div class="flex justify-between items-center border-b border-gray-300 pb-3">
                     <div>
-                        <h3 class="text-lg font-bold text-dark">Top 5 Sector Competitors & Peer Audit</h3>
-                        <p class="text-xs text-muted">Relative Valuation & Solvency vs. Sector Cohort</p>
+                        <h3 class="text-lg font-bold text-dark">Top 5 Granular Competitors & Peer Audit</h3>
+                        <p class="text-xs text-muted">Industry-Specific Benchmarking vs. Direct Operational Peers</p>
                     </div>
                     <span class="text-xs text-muted font-medium">Click peer to inspect</span>
                 </div>
@@ -463,7 +482,7 @@
                         <thead>
                             <tr class="text-muted border-b border-gray-300 uppercase tracking-wider text-[10px]">
                                 <th class="py-3 px-2">Ticker</th>
-                                <th class="py-3 px-2">Sector Profile</th>
+                                <th class="py-3 px-2">Sector Cohort</th>
                                 <th class="py-3 px-2">Market Cap</th>
                                 <th class="py-3 px-2">DuPont ROE</th>
                                 <th class="py-3 px-2">Altman Z-Score</th>
@@ -490,43 +509,54 @@
                 <div><p class="text-muted mb-1">Unfiltered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-unfilt-trades">0</span> / <span id="disp-diag-unfilt-frict" class="text-red-500">0%</span></p></div>
                 <div><p class="text-muted mb-1">Filtered Trades / Friction</p><p class="font-bold text-lg"><span id="disp-diag-filt-trades">0</span> / <span id="disp-diag-filt-frict" class="text-green-600">0%</span></p></div>
             </div>
-        </div>
 
-        <!-- MULTI-ASSET PORTFOLIO BASKET & CORRELATION MATRIX -->
-        <div class="fade-in-up delay-2 neo-flat p-8 space-y-6 mt-8">
-            <div class="flex justify-between items-center border-b border-gray-300 pb-3">
-                <div>
-                    <h3 class="text-lg font-bold text-dark">Advanced Multi-Asset Portfolio Basket</h3>
-                    <p class="text-xs text-muted">Inverse-Volatility Optimized Allocations & 1-Year Correlation Matrix</p>
+            <!-- DYNAMIC RISK-PARITY MULTI-ASSET BASKET -->
+            <div class="neo-flat p-8 space-y-6 mt-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-300 pb-3 gap-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-dark">Live Risk-Parity Portfolio Basket & Allocation Model</h3>
+                        <p class="text-xs text-muted">Optimal Inverse-Volatility Allocation, Correlation Heatmap & Horizon Frontier</p>
+                    </div>
+                    <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-emerald-600">Dynamic Risk Parity</span>
                 </div>
-                <span class="px-4 py-1.5 rounded-full text-xs font-bold neo-pressed text-emerald-600">Risk Parity Model</span>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="text-muted border-b border-gray-300 uppercase tracking-wider text-[10px]">
-                                <th class="py-3 px-2">Asset</th>
-                                <th class="py-3 px-2">Target Weight (%)</th>
-                                <th class="py-3 px-2">Annual Volatility</th>
-                            </tr>
-                        </thead>
-                        <tbody id="basket-table-body">
-                            <tr><td colspan="3" class="py-4 text-center text-muted animate-pulse">Calculating optimal weights...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <!-- Allocation Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="text-muted border-b border-gray-300 uppercase tracking-wider text-[10px]">
+                                    <th class="py-3 px-2">Asset</th>
+                                    <th class="py-3 px-2">Optimal Weight (%)</th>
+                                    <th class="py-3 px-2">Annual Volatility</th>
+                                </tr>
+                            </thead>
+                            <tbody id="basket-table-body">
+                                <tr><td colspan="3" class="py-4 text-center text-muted animate-pulse">Computing optimal basket weights...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-                <div class="overflow-x-auto">
-                    <p class="text-[10px] uppercase font-bold text-muted mb-3">1-Year Asset Correlation Matrix</p>
-                    <div id="correlation-matrix" class="w-full">
-                        <div class="text-center text-muted text-xs py-4 animate-pulse">Computing matrix...</div>
+                    <!-- Correlation Heatmap Matrix -->
+                    <div class="overflow-x-auto">
+                        <p class="text-[10px] uppercase font-bold text-muted mb-3">Live 6-Month Cross-Asset Correlation Matrix</p>
+                        <div id="correlation-matrix" class="w-full">
+                            <div class="text-center text-muted text-xs py-4 animate-pulse">Calculating covariance...</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
+                <!-- Expected Return Horizon Frontier Chart -->
+                <div class="neo-pressed p-5 rounded-2xl mt-4">
+                    <div class="flex justify-between items-center mb-2 px-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-muted">Basket Expected Cumulative Return Frontier (1Y Horizon)</span>
+                        <span id="basket-annual-ret" class="text-xs font-bold text-emerald-600">Exp. Return: --% | Vol: --%</span>
+                    </div>
+                    <div class="h-48 w-full relative"><canvas id="frontierChart"></canvas></div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <script>
@@ -538,6 +568,8 @@
         let candleChartInstance = null;
         let forecastChartInstance = null;
         let swingRsiChartInstance = null;
+        let frontierChartInstance = null;
+        let swing4DayChartInstance = null; // NEW: Added instance tracking for 4-day chart
         let candleSeries = null;
         let loaderInterval = null;
         let searchTimeout = null;
@@ -631,9 +663,10 @@
             }
         }
 
-        async function fetchPortfolioBasket() {
+        // Dynamically Triggered Portfolio Optimization & Frontier
+        async function fetchDynamicPortfolioBasket(ticker) {
             try {
-                const res = await fetch(`${RENDER_BACKEND_URL}/api/portfolio-basket`);
+                const res = await fetch(`${RENDER_BACKEND_URL}/api/portfolio-basket?anchor_ticker=${encodeURIComponent(ticker)}`);
                 const data = await res.json();
                 if (data.status !== "success") return;
                 
@@ -642,7 +675,7 @@
                 data.assets.forEach(a => {
                     tbody.innerHTML += `
                         <tr class="border-b border-gray-200 hover:bg-white/40 transition-colors">
-                            <td class="py-3 px-2 font-bold text-dark">${a.ticker}</td>
+                            <td class="py-3 px-2 font-bold text-dark cursor-pointer text-accent" onclick="selectTicker('${a.ticker}'); executeAnalysis();">${a.ticker} ↗</td>
                             <td class="py-3 px-2 font-bold text-accent">${a.weight}%</td>
                             <td class="py-3 px-2 text-muted">${a.volatility}%</td>
                         </tr>
@@ -651,16 +684,16 @@
                 
                 const corrContainer = document.getElementById('correlation-matrix');
                 let html = '<table class="w-full text-center text-xs border-collapse"><thead><tr><th class="py-2"></th>';
-                data.labels.forEach(l => html += `<th class="py-2 text-muted uppercase font-semibold">${l.substring(0,4)}</th>`);
+                data.labels.forEach(l => html += `<th class="py-2 text-muted uppercase font-semibold text-[9px]">${l.substring(0,5)}</th>`);
                 html += '</tr></thead><tbody>';
                 
                 data.correlation_matrix.forEach((row, i) => {
-                    html += `<tr><td class="py-2 font-bold text-left text-muted uppercase">${data.labels[i].substring(0,4)}</td>`;
+                    html += `<tr><td class="py-2 font-bold text-left text-muted uppercase text-[9px]">${data.labels[i].substring(0,5)}</td>`;
                     row.forEach(val => {
                         let bg = 'bg-gray-100'; let tc = 'text-dark';
                         if (val >= 0.99) { bg = 'bg-gray-300'; }
-                        else if (val > 0.6) { bg = 'bg-rose-100'; tc = 'text-rose-700'; }
-                        else if (val < 0.3) { bg = 'bg-emerald-100'; tc = 'text-emerald-700'; }
+                        else if (val > 0.5) { bg = 'bg-rose-100'; tc = 'text-rose-700'; }
+                        else if (val < 0.25) { bg = 'bg-emerald-100'; tc = 'text-emerald-700'; }
                         else { bg = 'bg-amber-100'; tc = 'text-amber-700'; }
                         html += `<td class="py-2 border border-white ${bg} ${tc} font-semibold">${val}</td>`;
                     });
@@ -668,12 +701,102 @@
                 });
                 html += '</tbody></table>';
                 corrContainer.innerHTML = html;
+
+                if (data.frontier) {
+                    document.getElementById('basket-annual-ret').innerText = `Exp. 1Y Return: +${data.frontier.annual_expected_ret}% | Volatility: ${data.frontier.portfolio_volatility}%`;
+                    renderFrontierChart(data.frontier);
+                }
             } catch(e) { console.error("Portfolio Basket Error: ", e); }
+        }
+
+        function renderFrontierChart(frontierData) {
+            const ctx = document.getElementById('frontierChart').getContext('2d');
+            if (frontierChartInstance) frontierChartInstance.destroy();
+
+            const labels = frontierData.days.map(d => `${d} Days`);
+            frontierChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Projected Portfolio Return %',
+                        data: frontierData.projected_returns,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        borderWidth: 2.5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { callbacks: { label: c => `Expected: +${c.raw}%` } }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#788293', font: { family: 'Poppins' } }, grid: { display: false } },
+                        y: { ticks: { color: '#788293', callback: v => `+${v}%` }, grid: { color: 'rgba(0,0,0,0.03)' } }
+                    }
+                }
+            });
+        }
+
+        // NEW: Function to render the 4-Day Swing Trajectory visually
+        function renderSwing4DayChart(swingData) {
+            const ctx = document.getElementById('swing4DayChart').getContext('2d');
+            if (swing4DayChartInstance) swing4DayChartInstance.destroy();
+
+            swing4DayChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: swingData.dates,
+                    datasets: [
+                        {
+                            label: 'Upper Bound',
+                            data: swingData.uppers,
+                            borderColor: 'rgba(90, 129, 250, 0)',
+                            backgroundColor: 'rgba(90, 129, 250, 0.15)',
+                            fill: '+1',
+                            tension: 0.2,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Expected Target',
+                            data: swingData.targets,
+                            borderColor: '#5a81fa',
+                            fill: false,
+                            tension: 0.2,
+                            pointRadius: 4,
+                            pointBackgroundColor: '#5a81fa',
+                            borderWidth: 2.5
+                        },
+                        {
+                            label: 'Lower Bound',
+                            data: swingData.lowers,
+                            borderColor: 'rgba(90, 129, 250, 0)',
+                            fill: false,
+                            tension: 0.2,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    scales: {
+                        x: { ticks: { color: '#788293', font: { family: 'Poppins', size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: '#788293', font: { size: 10 } }, grid: { color: 'rgba(0,0,0,0.03)' } }
+                    },
+                    animation: { duration: 1200, easing: 'easeOutQuart' }
+                }
+            });
         }
 
         window.onload = async () => {
             fetchMarketOverview();
-            fetchPortfolioBasket();
             
             try {
                 const res = await fetch(`${RENDER_BACKEND_URL}/api/scanner`);
@@ -742,10 +865,9 @@
             const loadTexts = [
                 `Connecting to exchange for ${activeTicker}...`, 
                 "Running Multi-Tier Data Waterfall...",
-                "Computing Forward Log-Drift Extrapolations...",
-                "Querying Institutional Master Database...",
-                "Deploying LightGBM / XGBoost Classifiers...",
-                "Generating Swing Indicators..."
+                "Computing 4-Day Swing Trajectory...",
+                "Benchmarking Granular Sector Cohort...",
+                "Solving Risk-Parity Allocation Matrix..."
             ];
             let i = 0;
             const textEl = document.getElementById('loading-text-dynamic');
@@ -759,9 +881,9 @@
                 if(i < loadTexts.length) {
                     textEl.style.opacity = 0;
                     setTimeout(() => { textEl.innerText = loadTexts[i]; textEl.style.opacity = 1; }, 200);
-                    barEl.style.width = `${(i + 1) * 16}%`;
+                    barEl.style.width = `${(i + 1) * 20}%`;
                 }
-            }, 900);
+            }, 800);
         }
 
         function calculateTradeSetup() {
@@ -821,51 +943,15 @@
                 data: {
                     labels: sc.dates,
                     datasets: [
-                        {
-                            label: 'RSI (14)',
-                            data: sc.rsi,
-                            borderColor: '#5a81fa',
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            tension: 0.2,
-                            fill: false
-                        },
-                        {
-                            label: 'Overbought (70)',
-                            data: Array(sc.dates.length).fill(70),
-                            borderColor: 'rgba(239, 68, 68, 0.4)',
-                            borderDash: [4, 4],
-                            borderWidth: 1.5,
-                            pointRadius: 0,
-                            fill: false
-                        },
-                        {
-                            label: 'Oversold (30)',
-                            data: Array(sc.dates.length).fill(30),
-                            borderColor: 'rgba(34, 197, 94, 0.4)',
-                            borderDash: [4, 4],
-                            borderWidth: 1.5,
-                            pointRadius: 0,
-                            fill: false
-                        }
+                        { label: 'RSI (14)', data: sc.rsi, borderColor: '#5a81fa', borderWidth: 2, pointRadius: 0, tension: 0.2, fill: false },
+                        { label: 'Overbought (70)', data: Array(sc.dates.length).fill(70), borderColor: 'rgba(239, 68, 68, 0.4)', borderDash: [4, 4], borderWidth: 1.5, pointRadius: 0, fill: false },
+                        { label: 'Oversold (30)', data: Array(sc.dates.length).fill(30), borderColor: 'rgba(34, 197, 94, 0.4)', borderDash: [4, 4], borderWidth: 1.5, pointRadius: 0, fill: false }
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { mode: 'index', intersect: false }
-                    },
-                    scales: {
-                        x: { display: false },
-                        y: {
-                            min: 15,
-                            max: 85,
-                            ticks: { color: '#788293', stepSize: 20 },
-                            grid: { color: 'rgba(0,0,0,0.03)' }
-                        }
-                    },
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    scales: { x: { display: false }, y: { min: 15, max: 85, ticks: { color: '#788293', stepSize: 20 }, grid: { color: 'rgba(0,0,0,0.03)' } } },
                     animation: { duration: 1200, easing: 'easeOutQuart' }
                 }
             });
@@ -941,7 +1027,6 @@
                         document.getElementById('disp-diag-filt-trades').innerText = data.diagnostics.filtered_trades;
                         document.getElementById('disp-diag-filt-frict').innerText = `${data.diagnostics.filtered_friction_pct}%`;
 
-                        // Populate Swing Trading Gauges & Plain-English Verdict
                         if (data.swing_metrics) {
                             const sm = data.swing_metrics;
                             const rsiEl = document.getElementById('swing-rsi');
@@ -1019,11 +1104,27 @@
                             document.getElementById('swing-atr').innerText = `${sm.atr_pct}%`;
                         }
 
-                        if (data.swing_chart) {
-                            renderSwingOscillator(data.swing_chart);
+                        if (data.swing_forecast && data.swing_forecast.length > 0) {
+                            const grid = document.getElementById('swing-forecast-grid');
+                            grid.innerHTML = '';
+                            data.swing_forecast.forEach(sf => {
+                                grid.innerHTML += `
+                                    <div class="neo-flat p-3 text-center rounded-xl">
+                                        <span class="text-[9px] font-bold text-muted block uppercase">${sf.day} (${sf.date})</span>
+                                        <span class="text-base font-extrabold text-accent block my-0.5">${currentCurrencySym}${sf.target}</span>
+                                        <span class="text-[9px] text-muted block">${currentCurrencySym}${sf.lower} - ${currentCurrencySym}${sf.upper}</span>
+                                    </div>
+                                `;
+                            });
                         }
 
-                        // Fundamentals Panel
+                        // NEW: Render the 4-Day visual chart
+                        if (data.swing_4day_chart) {
+                            renderSwing4DayChart(data.swing_4day_chart);
+                        }
+
+                        if (data.swing_chart) renderSwingOscillator(data.swing_chart);
+
                         if (data.fundamentals) {
                             const f = data.fundamentals;
                             const badge = document.getElementById('fund-source-badge');
@@ -1102,6 +1203,8 @@
                         renderCandleChart(data.candles);
                         renderSmoothPnlChart(data.chart_data);
                         renderForecastChart(data.forecast_data);
+
+                        fetchDynamicPortfolioBasket(data.ticker);
 
                     } catch (renderError) { alert("Error rendering dashboard: " + renderError.message); }
                 }, 50); 
